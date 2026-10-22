@@ -1,0 +1,16 @@
+# Abhängigkeiten und Builds
+node_modules/
+dist/
+.next/
+target/
+
+# Geheimnisse und lokale Einstellungen
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+
+# Betriebssystem und Editor
+.DS_Store
+Thumbs.db
+*.log

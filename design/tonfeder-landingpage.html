@@ -1,0 +1,2053 @@
+<title>Tonfeder Landingpage</title>
+<meta name="description" content="Designentwurf: Spracheingabe für Teams. Taste halten, sprechen, loslassen. Verarbeitet in Deutschland oder im eigenen Netz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400..600&display=swap">
+<style>
+/* Design-Tokens nach Basis-App: nur dunkel, Lime-Akzent, Terminal-Anmutung, kantig */
+:root{
+  color-scheme:dark;
+  --canvas:#0a0f0b; --panel:#121a14; --panel-2:#1a241c; --edge:#27362a; --edge-2:#34483a;
+  --ink:#e8f0e9; --ink-muted:#a8bcab; --ink-dim:#80968a;
+  --accent:#a3e635; --accent-soft:#bef264; --accent-ink:#0a0f0b;
+  --live:#4ade80; --progress:#fcd34d; --idea:#7dd3fc; --danger:#fda4af;
+  --r-s:2px; --r:3px; --r-l:4px;
+  --gutter:clamp(16px,4vw,32px);
+  --f-sans:'Geist',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'Geist Mono',ui-monospace,'Cascadia Mono',Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--canvas);color:var(--ink);font:400 17px/1.65 var(--f-sans);-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+::selection{background:var(--accent);color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+a{color:inherit}
+p{margin:0}
+h1,h2,h3{margin:0;text-wrap:balance;font-family:var(--f-sans)}
+h1{font-size:clamp(46px,7.4vw,98px);font-weight:700;letter-spacing:-.048em;line-height:.94}
+h2{font-size:clamp(31px,4.4vw,56px);font-weight:650;letter-spacing:-.036em;line-height:1.02}
+h3{font-size:18.5px;font-weight:600;letter-spacing:-.012em;line-height:1.3}
+.wrap{max-width:1200px;margin-inline:auto;padding-inline:var(--gutter)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.kicker{font:500 13px/1.4 var(--f-mono);color:var(--accent);letter-spacing:.01em}
+.hl{color:var(--accent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.abschnitt{padding-block:clamp(72px,9vw,128px)}
+.kopfzeile{display:grid;gap:14px;max-width:780px;margin-bottom:clamp(36px,5vw,60px)}
+.kopfzeile .sub{font-size:18.5px;color:var(--ink-muted);max-width:60ch}
+.dots{display:flex;gap:6px}.dots i{width:9px;height:9px;background:var(--edge-2)}
+
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{animation:einblenden linear both;animation-timeline:view();animation-range:entry 0% cover 26%}
+  }
+}
+@keyframes einblenden{from{opacity:.3;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes wachsen-x{to{transform:scaleX(1)}}
+@keyframes blinken{50%{opacity:0}}
+
+.fortschritt{display:none}
+@supports (animation-timeline: scroll()){
+  .fortschritt{display:block;position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);height:2px;z-index:70;background:var(--accent);transform-origin:0 50%;transform:scaleX(0);animation:wachsen-x linear both;animation-timeline:scroll(root)}
+}
+
+/* Kopf */
+.entwurf{background:var(--panel);border-bottom:1px solid var(--edge);color:var(--ink-dim);font:400 12px/1.4 var(--f-mono);text-align:center;padding-block:7px;padding-inline:var(--gutter)}
+.kopf{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:rgba(10,15,11,.84);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid var(--edge)}
+.kopf-in{display:flex;align-items:center;gap:20px;min-height:64px}
+.marke{display:inline-flex;align-items:center;text-decoration:none}
+.marke svg{height:26px;width:130px}
+.marke:hover{--w-feder:var(--accent)}
+.nav{display:flex;gap:2px;margin-left:auto}
+.nav a{text-decoration:none;font-size:14.5px;padding:8px 11px;color:var(--ink);transition:color .15s}
+.nav a:hover{color:var(--accent)}
+.burger{display:none;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-s);border:1px solid var(--edge);background:transparent;color:var(--ink);cursor:pointer}
+.burger:hover{border-color:var(--accent);color:var(--accent)}
+.mnav{border-top:1px solid var(--edge)}
+.mnav ul{list-style:none;margin:0;padding-block:6px}
+.mnav a{display:block;padding:12px 0;text-decoration:none}
+.mnav a:hover{color:var(--accent)}
+@media (max-width:1040px){.nav{display:none}.burger{display:inline-flex}.kopf .btn-sm{margin-left:auto}}
+@media (max-width:420px){.marke svg{width:104px;height:21px}.kopf .btn-sm{padding:0 11px}}
+
+/* Buttons und Badges */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:var(--r-s);border:1px solid transparent;font:600 15.5px/1 var(--f-sans);text-decoration:none;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .25s,transform .1s}
+.btn:active{transform:translateY(1px)}
+.btn-accent{background:var(--accent);color:var(--accent-ink)}
+.btn-accent:hover{background:var(--accent-soft);box-shadow:0 0 34px -6px rgba(163,230,53,.6)}
+.btn-ghost{background:rgba(18,26,20,.6);border-color:var(--edge-2);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{min-height:40px;padding:0 15px;font-size:14px}
+.btn .pfeil{transition:transform .2s}
+.btn:hover .pfeil{transform:translateX(3px)}
+.badges{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:var(--r-s);border:1px solid color-mix(in srgb,var(--c,var(--live)) 40%,transparent);color:var(--c,var(--live));font:500 12.5px/1.25 var(--f-mono);white-space:nowrap}
+.badge svg{width:12px;height:12px;flex:none}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--edge);padding-block:clamp(40px,6vw,92px) clamp(64px,7vw,108px)}
+.hero-bg{position:absolute;inset:0;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(60px)}
+.b1{width:560px;height:560px;left:-160px;top:-200px;background:radial-gradient(circle,rgba(163,230,53,.28),transparent 65%);animation:schweben 18s ease-in-out infinite alternate}
+.b2{width:680px;height:680px;right:-220px;bottom:-320px;background:radial-gradient(circle,rgba(74,222,128,.2),transparent 65%);animation:schweben 24s ease-in-out infinite alternate-reverse}
+@keyframes schweben{to{transform:translate(90px,70px) scale(1.12)}}
+.gitter{position:absolute;inset:0;background-image:linear-gradient(rgba(232,240,233,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(232,240,233,.05) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse 70% 65% at 62% 38%,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse 70% 65% at 62% 38%,#000 25%,transparent 78%)}
+.hero-in{position:relative;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);gap:clamp(40px,5vw,76px);align-items:center}
+.hero-text{display:grid;gap:24px;justify-items:start}
+.lead{font-size:clamp(17.5px,1.6vw,20px);color:var(--ink-muted);max-width:52ch;line-height:1.6}
+.lead b{color:var(--ink);font-weight:500}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.cursor-block{display:inline-block;width:.085em;height:.8em;margin-left:.05em;vertical-align:-.02em;background:var(--accent);animation:blinken 1.1s steps(1) infinite}
+@media (max-width:980px){.hero-in{grid-template-columns:1fr}}
+
+/* Fenster, Pille, Tasten (gemeinsam) */
+.win{background:var(--panel);border:1px solid var(--edge);border-radius:var(--r-l);overflow:hidden;box-shadow:0 40px 90px -40px rgba(0,0,0,.9)}
+.win-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--edge);background:var(--panel-2);font:500 12.5px var(--f-mono);color:var(--ink-muted)}
+.win-bar .badge{margin-left:auto;font-size:11px;padding:2px 7px}
+.win-meta{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;margin:0;padding:10px 16px;border-bottom:1px solid var(--edge);font-size:14px}
+.win-meta dt{color:var(--ink-dim)}.win-meta dd{margin:0}
+.win-body{padding:16px 16px 42px;min-height:222px;font-size:15.5px;line-height:1.6}
+.win-body p+p{margin-top:10px}
+.frisch{animation:frisch 1.8s ease-out}
+@keyframes frisch{from{background:rgba(163,230,53,.32);box-shadow:0 0 0 3px rgba(163,230,53,.32)}to{background:rgba(163,230,53,0);box-shadow:0 0 0 3px rgba(163,230,53,0)}}
+.caret{display:inline-block;width:2px;height:1.05em;margin-left:1px;vertical-align:-3px;background:var(--accent);animation:blinken 1.05s steps(1) infinite}
+.pill{position:absolute;left:50%;bottom:-19px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:10px;padding:8px 12px 8px 11px;border-radius:var(--r);background:#050806;border:1px solid var(--edge-2);font:500 13px/1 var(--f-mono);color:var(--ink);white-space:nowrap;box-shadow:0 14px 30px -10px rgba(0,0,0,.85);transition:border-color .2s,box-shadow .2s,opacity .2s}
+.pill[data-z="hoert"],.pill[data-z="sendet"]{border-color:rgba(163,230,53,.65);box-shadow:0 0 0 5px rgba(163,230,53,.08),0 14px 30px -10px rgba(0,0,0,.85)}
+.pill[data-z="fertig"]{border-color:rgba(74,222,128,.5)}
+.pill[data-z="stumm"],.pill[data-z="zeit"]{border-color:rgba(252,211,77,.6)}
+.pill[data-z="offline"],.pill[data-z="gesperrt"]{border-color:rgba(253,164,175,.6)}
+.pill[data-z="pause"]{opacity:.7}
+.mini-bars{display:flex;align-items:center;gap:2px;height:16px}
+.mini-bars i{width:3px;height:4px;background:var(--accent)}
+.pill[data-z="hoert"] .mini-bars i{animation:pegel .7s ease-in-out infinite alternate}
+.pill[data-z="hoert"] .mini-bars i:nth-child(2){animation-duration:.55s;animation-delay:-.2s}
+.pill[data-z="hoert"] .mini-bars i:nth-child(3){animation-duration:.8s;animation-delay:-.4s}
+.pill[data-z="hoert"] .mini-bars i:nth-child(4){animation-duration:.6s;animation-delay:-.1s}
+@keyframes pegel{from{height:3px}to{height:16px}}
+.pill[data-z="schreibt"] .mini-bars i,.pill[data-z="sendet"] .mini-bars i{animation:puls .9s ease-in-out infinite}
+.pill[data-z="schreibt"] .mini-bars i:nth-child(2),.pill[data-z="sendet"] .mini-bars i:nth-child(2){animation-delay:.12s}
+.pill[data-z="schreibt"] .mini-bars i:nth-child(3),.pill[data-z="sendet"] .mini-bars i:nth-child(3){animation-delay:.24s}
+.pill[data-z="schreibt"] .mini-bars i:nth-child(4),.pill[data-z="sendet"] .mini-bars i:nth-child(4){animation-delay:.36s}
+@keyframes puls{0%,100%{opacity:.25}50%{opacity:1}}
+.pill[data-z="fertig"] .mini-bars i{background:var(--live)}
+.pill[data-z="stumm"] .mini-bars i,.pill[data-z="zeit"] .mini-bars i{background:var(--progress)}
+.pill[data-z="offline"] .mini-bars i,.pill[data-z="gesperrt"] .mini-bars i{background:var(--danger)}
+.pill[data-z="bereit"] .mini-bars i,.pill[data-z="pause"] .mini-bars i{background:var(--ink-dim)}
+.pill-zeit{color:var(--ink-dim)}
+.pill-zeit:empty{display:none}
+.pill-fort{display:none;width:54px;height:4px;background:var(--edge-2);position:relative;overflow:hidden}
+.pill-fort i{position:absolute;inset:0;background:var(--accent);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.pill[data-z="sendet"] .pill-fort{display:block}
+.pill-ort{font:500 11px/1 var(--f-mono);color:var(--ink-muted);border:1px solid var(--edge-2);padding:3px 5px}
+.key{display:inline-flex;align-items:center;justify-content:center;min-width:2.4em;padding:5px 9px 6px;border-radius:var(--r-s);font:600 12.5px/1 var(--f-mono);background:var(--canvas);color:var(--ink);border:1px solid var(--edge-2);box-shadow:inset 0 -3px 0 var(--edge);transition:transform .08s,box-shadow .08s}
+
+/* Hero-Demo */
+.demo{position:relative;display:grid;gap:30px}
+.win-wrap{position:relative}
+.steuer{display:grid;gap:12px;padding:14px;border-radius:var(--r-l);border:1px solid var(--edge);background:rgba(18,26,20,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.wave{display:block;width:100%;height:56px}
+.hold{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:58px;border-radius:var(--r);border:1px solid var(--edge-2);background:var(--panel-2);color:var(--ink);font:600 15.5px var(--f-sans);cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-touch-callout:none;transition:background-color .15s,color .15s,border-color .15s,box-shadow .25s}
+.hold:hover{border-color:var(--accent)}
+.hold.an{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);box-shadow:0 0 44px -6px rgba(163,230,53,.65)}
+.hold.an .key{transform:translateY(2px);box-shadow:inset 0 -1px 0 var(--edge)}
+.hold.lockt::after{content:"";position:absolute;inset:-1px;border:1.5px solid var(--accent);animation:ping 1.8s ease-out infinite;pointer-events:none}
+@keyframes ping{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.05)}}
+.steuer-fuss{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 14px;font:400 12.5px/1.45 var(--f-mono);color:var(--ink-dim)}
+.textlink{background:none;border:0;padding:4px 0;color:var(--accent);font:500 12.5px var(--f-mono);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* Laufband */
+.laufband{position:relative;overflow:hidden;border-bottom:1px solid var(--edge);background:var(--panel);padding-block:15px}
+.laufband-in{display:flex;width:max-content;animation:laufen 42s linear infinite}
+.laufband:hover .laufband-in{animation-play-state:paused}
+.laufband ul{display:flex;gap:34px;margin:0;padding:0 17px;list-style:none;font:500 14px var(--f-mono);color:var(--ink-muted);white-space:nowrap}
+.laufband li::before{content:"▸ ";color:var(--accent)}
+.laufband::before,.laufband::after{content:"";position:absolute;top:0;bottom:0;width:80px;z-index:1;pointer-events:none}
+.laufband::before{left:0;background:linear-gradient(90deg,var(--panel),transparent)}
+.laufband::after{right:0;background:linear-gradient(-90deg,var(--panel),transparent)}
+@keyframes laufen{to{transform:translateX(-50%)}}
+
+/* Einsatzbereiche */
+.persona{display:grid;grid-template-columns:minmax(240px,.4fr) minmax(0,1fr);gap:clamp(14px,2.4vw,26px);align-items:stretch}
+.p-tabs{display:grid;gap:8px;align-content:start}
+.p-tab{position:relative;display:grid;gap:2px;text-align:left;padding:14px 16px 16px;border-radius:var(--r);border:1px solid var(--edge);background:var(--panel);color:var(--ink);font:inherit;cursor:pointer;overflow:hidden;transition:border-color .2s,background-color .2s}
+.p-tab:hover{border-color:rgba(163,230,53,.5)}
+.p-tab[aria-selected="true"]{border-color:var(--accent);background:var(--panel-2)}
+.p-tab .pfad{font:500 12px var(--f-mono);color:var(--accent)}
+.p-tab b{font-size:17px;font-weight:600}
+.p-tab .unter{font-size:14px;color:var(--ink-muted)}
+.p-tab .lauf{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+.p-tab .lauf.an{animation:wachsen-x 7s linear forwards}
+.p-buehne{position:relative;min-height:460px;border-radius:var(--r-l);overflow:hidden;border:1px solid var(--edge);background:var(--panel)}
+.p-buehne img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.07);transition:opacity .8s ease,transform 7s ease-out}
+.p-buehne img.an{opacity:1;transform:scale(1)}
+.p-buehne::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(10,15,11,0) 35%,rgba(10,15,11,.9) 100%),linear-gradient(90deg,rgba(10,15,11,.35),rgba(10,15,11,0) 55%)}
+.p-buehne .pill{left:auto;right:clamp(14px,2.5vw,22px);top:clamp(14px,2.5vw,22px);bottom:auto;transform:none}
+.p-karte{position:absolute;z-index:2;left:clamp(14px,2.5vw,26px);right:clamp(14px,2.5vw,26px);bottom:clamp(14px,2.5vw,26px);max-width:580px;border-radius:var(--r);border:1px solid var(--edge-2);background:rgba(18,26,20,.88);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);overflow:hidden}
+.p-karte-kopf{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--edge);font:500 12.5px var(--f-mono);color:var(--ink-muted)}
+.p-karte-kopf .dots i{width:7px;height:7px}
+.p-text{padding:14px;font-size:15.5px;min-height:6.2em}
+@media (max-width:880px){
+  .persona{grid-template-columns:1fr}
+  .p-tabs{grid-auto-flow:column;grid-auto-columns:minmax(168px,1fr);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+  .p-tab{scroll-snap-align:start}
+}
+
+/* So geht's */
+.bento{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px}
+.foto-karte{position:relative;min-height:440px;border-radius:var(--r-l);overflow:hidden;border:1px solid var(--edge)}
+.foto-karte img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.foto-karte::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,15,11,.1),rgba(10,15,11,.85) 85%)}
+.foto-over{position:absolute;z-index:1;left:22px;right:22px;bottom:22px}
+.zahlen{display:grid;gap:10px;list-style:none;margin:0;padding:0}
+.zahlen li{display:flex;align-items:baseline;gap:12px;font-size:15.5px;color:var(--ink-muted)}
+.zahlen b{min-width:4.2em;font:600 20px var(--f-mono);color:var(--accent)}
+.schritte{display:grid;gap:16px;list-style:none;margin:0;padding:0}
+.schritt{display:grid;grid-template-columns:118px 1fr;gap:20px;align-items:center;padding:20px;border-radius:var(--r);border:1px solid var(--edge);background:var(--panel);transition:border-color .2s}
+.schritt:hover{border-color:rgba(163,230,53,.6)}
+.schritt .vis{height:78px;border-radius:var(--r-s);border:1px solid var(--edge);background:var(--canvas);display:grid;place-items:center;overflow:hidden}
+.schritt .nr{font:500 12px var(--f-mono);color:var(--accent)}
+.schritt p{color:var(--ink-muted);font-size:15.5px;margin-top:4px}
+.vis .key{animation:druecken 2.4s ease-in-out infinite}
+@keyframes druecken{0%,18%,72%,100%{transform:none;box-shadow:inset 0 -3px 0 var(--edge);background:var(--canvas);color:var(--ink)}24%,66%{transform:translateY(2px);box-shadow:inset 0 -1px 0 var(--edge);background:var(--accent);color:var(--accent-ink)}}
+.vis .mini-bars{height:34px;gap:3px}
+.vis .mini-bars i{width:4px;animation:pegel2 .8s ease-in-out infinite alternate}
+.vis .mini-bars i:nth-child(2n){animation-duration:.6s;animation-delay:-.3s}
+.vis .mini-bars i:nth-child(3n){animation-duration:.9s;animation-delay:-.5s}
+@keyframes pegel2{from{height:5px}to{height:32px}}
+.vis .tipp{font:500 12.5px var(--f-mono);color:var(--ink)}
+@media (max-width:880px){.bento{grid-template-columns:1fr}.foto-karte{min-height:340px}}
+@media (max-width:440px){.schritt{grid-template-columns:1fr}}
+
+/* Bildbänder (wiederkehrendes Element) */
+.band{position:relative;overflow:hidden;border-block:1px solid var(--edge);background:#000}
+.band-flaeche{position:relative;height:clamp(360px,46vw,620px)}
+.band-gross .band-flaeche{height:clamp(480px,66vw,820px)}
+.band-slide{position:absolute;inset:0;margin:0;transform:translateX(100%);transition:transform 1s cubic-bezier(.7,0,.2,1)}
+.band-slide.links{transform:translateX(-100%)}
+.band-slide.an{transform:none;z-index:1}
+.band-slide.ohne{transition:none}
+.band-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.1);transition:transform 9s ease-out}
+.band-slide.an img{transform:scale(1)}
+.band-slide::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(10,15,11,.95) 0%,rgba(10,15,11,.4) 48%,rgba(10,15,11,.05) 100%),linear-gradient(90deg,rgba(10,15,11,.7),rgba(10,15,11,0) 68%)}
+.band-text{position:absolute;z-index:2;left:0;right:0;bottom:clamp(76px,8vw,108px)}
+.band-text .wrap>*{transition:opacity .6s .45s,transform .6s .45s}
+.band-slide:not(.an) .band-text .wrap>*{opacity:0;transform:translateY(18px)}
+.band-text .kicker{margin-bottom:16px;font-size:clamp(13px,1.2vw,15.5px);min-height:1.4em}
+.band-text .aus{color:var(--ink-dim);transition:opacity .4s}
+.band-satz{font:700 clamp(32px,5vw,70px)/1 var(--f-sans);letter-spacing:-.045em;max-width:17ch;text-wrap:balance}
+.band-gross .band-satz{font-size:clamp(40px,7.2vw,112px);max-width:14ch;letter-spacing:-.05em}
+.band-satz .hl{color:var(--accent)}
+.band-steuer{position:absolute;z-index:3;left:0;right:0;bottom:22px;display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.band-zahl{margin-right:10px;font:500 13px var(--f-mono);color:var(--ink-muted)}
+.band-zahl b{color:var(--accent);font-weight:600}
+.band-btn{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--edge-2);border-radius:var(--r-s);background:rgba(10,15,11,.6);color:var(--ink);font:600 15px var(--f-mono);cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.band-btn:hover{border-color:var(--accent);color:var(--accent)}
+.band-lauf{position:absolute;z-index:3;left:0;right:0;bottom:0;height:3px;background:rgba(232,240,233,.08)}
+.band-lauf i{display:block;height:100%;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+.band-lauf i.an{animation:wachsen-x 7s linear forwards}
+
+/* Desktop-Nachbau */
+.desk-rahmen{overflow-x:auto;border:1px solid var(--edge);border-radius:var(--r-l);background:#050806}
+.desk-groesse{position:relative;width:1200px;height:680px;overflow:hidden}
+.desk{position:absolute;left:0;top:0;width:1200px;height:680px;transform-origin:0 0;overflow:hidden;font:400 14px/1.5 var(--f-sans);color:var(--ink);user-select:none;-webkit-user-select:none}
+.desk-bild{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.desk::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,6,.15),rgba(5,8,6,.45))}
+.desk-icons{position:absolute;left:18px;top:18px;display:grid;gap:14px}
+.d-icon{display:grid;justify-items:center;gap:4px;width:76px;font-size:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.d-icon svg{width:40px;height:34px}
+.dw{position:absolute;border-radius:var(--r-l);overflow:hidden;box-shadow:0 30px 70px -20px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.08)}
+.dw-bar{display:flex;align-items:center;gap:10px;height:36px;padding:0 0 0 12px;font-size:12.5px}
+.dw-knoepfe{margin-left:auto;display:flex;height:100%}
+.dw-knoepfe span,.dw-knoepfe button{width:44px;display:grid;place-items:center;font:400 13px var(--f-mono);color:inherit;background:none;border:0}
+.dw-knoepfe button{cursor:pointer}
+.dw-knoepfe button:hover{background:#c42b1c;color:#fff}
+.dw-editor{left:150px;top:44px;width:660px;height:440px;background:#f3f3f3;color:#1b1b1b}
+.dw-editor .dw-bar{background:#e9e9e9;color:#333}
+.ed-menue{display:flex;gap:18px;padding:6px 14px;border-bottom:1px solid #d6d6d6;background:#f6f6f6;font-size:12.5px;color:#444}
+.ed-werkzeug{display:flex;gap:6px;padding:6px 14px;border-bottom:1px solid #d6d6d6;background:#fafafa}
+.ed-werkzeug span{display:grid;place-items:center;min-width:26px;height:24px;padding:0 6px;border:1px solid #ddd;background:#fff;font:600 12px var(--f-sans);color:#333}
+.ed-seite{margin:16px auto 0;width:560px;height:330px;padding:26px 32px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.15);font:400 14px/1.65 var(--f-sans);overflow:hidden}
+.ed-seite h4{margin:0 0 6px;font-size:16px;font-weight:700}
+.ed-seite .klein{font-size:12.5px;color:#555;margin-bottom:12px}
+.ed-seite b{font-weight:700}
+.ed-seite .caret{background:#1b1b1b}
+.ed-seite .frisch{animation:frisch-hell 1.8s ease-out}
+@keyframes frisch-hell{from{background:rgba(163,230,53,.55)}to{background:rgba(163,230,53,0)}}
+.desk-pill{left:600px;bottom:64px;top:auto;cursor:grab;touch-action:none}
+.desk-pill.zieht{cursor:grabbing;box-shadow:0 0 0 2px var(--accent),0 20px 40px -10px rgba(0,0,0,.9)}
+.desk-pill .griff{color:var(--ink-dim);font:600 11px/1 var(--f-mono);letter-spacing:-1px}
+.taskleiste{position:absolute;left:0;right:0;bottom:0;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(18,24,20,.86);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.08)}
+.tb-mitte{display:flex;gap:4px}
+.tb-app{position:relative;width:40px;height:40px;display:grid;place-items:center;border-radius:var(--r-s)}
+.tb-app svg{width:22px;height:22px}
+.tb-app.offen::after{content:"";position:absolute;bottom:2px;left:15px;right:15px;height:3px;background:var(--accent)}
+.tb-rechts{position:absolute;right:8px;top:0;bottom:0;display:flex;align-items:center;gap:2px;font-size:12px;color:#e8e8e8}
+.tb-rechts .tb-glyph{width:28px;display:grid;place-items:center;color:#cfd8d1}
+.tray-btn{width:34px;height:40px;display:grid;place-items:center;border:0;background:none;cursor:pointer;border-radius:var(--r-s)}
+.tray-btn:hover,.tray-btn[aria-expanded="true"]{background:rgba(255,255,255,.1)}
+.tray-btn svg{width:18px;height:18px}
+.uhr{display:grid;justify-items:end;padding:0 8px;line-height:1.3;font-size:12px}
+.desk{--z-grund:#a8bcab;--z-rand:none;--z-tinte:#0a0f0b}
+.desk[data-tray="aktiv"]{--z-grund:#a3e635}
+.desk[data-tray="warn"]{--z-grund:#fcd34d}
+.desk[data-tray="gesperrt"]{--z-grund:#fda4af}
+.desk[data-tray="aus"]{--z-grund:transparent;--z-rand:#a8bcab;--z-tinte:#a8bcab}
+.tray-menue{position:absolute;right:12px;bottom:56px;width:310px;padding:8px;border-radius:var(--r-l);background:rgba(20,28,22,.97);border:1px solid var(--edge-2);box-shadow:0 24px 60px -16px rgba(0,0,0,.9);z-index:6}
+.tm-kopf{display:flex;align-items:center;gap:10px;padding:8px 8px 10px}
+.tm-kopf svg{width:30px;height:30px;flex:none}
+.tm-kopf svg,.dw-einst .dw-bar svg{--z-grund:#a3e635;--z-rand:none;--z-tinte:#0a0f0b}
+.tm-kopf b{display:block;font-size:14px}
+.tm-kopf small{display:block;font:400 11.5px var(--f-mono);color:var(--ink-dim)}
+.tm-status{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 4px 6px;padding:8px;border:1px solid var(--edge);background:var(--canvas);font:400 11.5px var(--f-mono);color:var(--ink-muted)}
+.tray-menue button{display:flex;justify-content:space-between;width:100%;min-height:36px;padding:0 10px;border:0;border-radius:var(--r-s);background:none;color:var(--ink);font:400 13.5px var(--f-sans);text-align:left;cursor:pointer;align-items:center}
+.tray-menue button:hover,.tray-menue button:focus-visible{background:var(--panel-2);color:var(--accent)}
+.tray-menue hr{border:0;border-top:1px solid var(--edge);margin:6px 4px}
+.tm-fuss{padding:6px 10px 2px;font-size:11px;color:var(--ink-dim)}
+.dw-einst{left:690px;top:96px;width:470px;height:400px;background:var(--panel);color:var(--ink);z-index:5}
+.dw-einst .dw-bar{background:var(--panel-2);border-bottom:1px solid var(--edge);color:var(--ink-muted)}
+.dw-einst .dw-bar svg{width:16px;height:16px}
+.einst{display:grid;grid-template-columns:140px 1fr;height:calc(100% - 36px)}
+.einst-nav{display:grid;gap:2px;align-content:start;padding:10px 8px;border-right:1px solid var(--edge)}
+.einst-nav button{min-height:34px;padding:0 10px;border:0;border-radius:var(--r-s);background:none;color:var(--ink-muted);font:500 13px var(--f-sans);text-align:left;cursor:pointer}
+.einst-nav button[aria-selected="true"]{background:var(--panel-2);color:var(--accent)}
+.einst-inhalt{padding:14px 16px;overflow:auto}
+.e-zeile{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--edge);font-size:13.5px}
+.e-zeile small{display:block;font-size:11.5px;color:var(--ink-dim);text-align:right}
+.e-zeile select{width:auto;min-width:170px;padding:6px 8px;font-size:13px;border-radius:var(--r-s);background:var(--canvas);border:1px solid var(--edge-2);color:var(--ink)}
+.seg-klein{display:inline-flex;border:1px solid var(--edge-2);border-radius:var(--r-s);overflow:hidden}
+.seg-klein button{padding:5px 9px;border:0;background:none;color:var(--ink-muted);font:500 12px var(--f-sans);cursor:pointer}
+.seg-klein button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.schalter{width:40px;height:22px;padding:2px;border:1px solid var(--edge-2);border-radius:var(--r-s);background:var(--canvas);cursor:pointer;display:flex}
+.schalter i{width:16px;height:16px;background:var(--ink-dim);transition:transform .15s,background-color .15s}
+.schalter[aria-checked="true"] i{transform:translateX(18px);background:var(--accent)}
+.e-liste{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.e-liste li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--edge);background:var(--canvas);font-size:13px}
+.e-liste button{border:1px solid var(--edge-2);background:none;color:var(--ink-muted);font:500 11.5px var(--f-mono);padding:3px 6px;cursor:pointer}
+.e-liste button:hover{color:var(--accent);border-color:var(--accent)}
+.e-add{display:flex;gap:6px}
+.e-add input{padding:6px 8px;font-size:13px;border-radius:var(--r-s)}
+.e-add button{padding:0 10px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font:600 12.5px var(--f-sans);cursor:pointer}
+.e-info{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:13px}
+.e-info dt{color:var(--ink-dim)}.e-info dd{margin:0;font-family:var(--f-mono)}
+.marker{position:absolute;z-index:8;width:22px;height:22px;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font:700 12px var(--f-mono);box-shadow:0 0 0 3px rgba(10,15,11,.6);pointer-events:none}
+.desk-pill .marker{left:-12px;top:-12px}
+.zeig{outline:2px solid var(--accent);outline-offset:4px;animation:zeigen 1.6s ease-out}
+@keyframes zeigen{0%,60%{outline-color:var(--accent)}100%{outline-color:transparent}}
+.desk-toast{position:absolute;left:50%;top:18px;transform:translateX(-50%);z-index:9;padding:8px 14px;background:#050806;border:1px solid var(--edge-2);font:500 12.5px var(--f-mono);color:var(--ink)}
+.desk-legende{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:16px;margin-top:16px}
+.legende-punkte{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;list-style:none;margin:0;padding:0}
+.legende-punkte button{display:grid;grid-template-columns:26px 1fr;gap:4px 12px;width:100%;height:100%;padding:14px;text-align:left;border:1px solid var(--edge);border-radius:var(--r);background:var(--panel);color:var(--ink);font:inherit;cursor:pointer;transition:border-color .2s}
+.legende-punkte button:hover{border-color:var(--accent)}
+.legende-punkte .nr{grid-row:span 2;width:24px;height:24px;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font:700 12px var(--f-mono)}
+.legende-punkte b{font-weight:600;font-size:15.5px}
+.legende-punkte span.t{font-size:14px;color:var(--ink-muted)}
+.zustaende{display:grid;gap:12px;align-content:start;padding:16px;border:1px solid var(--edge);border-radius:var(--r);background:var(--panel)}
+.zustaende .label{font:500 12px var(--f-mono);color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em}
+.z-chips{display:flex;flex-wrap:wrap;gap:6px}
+.z-chip{min-height:32px;padding:0 10px;border:1px solid var(--edge-2);border-radius:var(--r-s);background:var(--canvas);color:var(--ink);font:500 12.5px var(--f-mono);cursor:pointer}
+.z-chip:hover{border-color:var(--accent);color:var(--accent)}
+.z-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (max-width:900px){.desk-legende{grid-template-columns:1fr}}
+@media (max-width:560px){.legende-punkte{grid-template-columns:1fr}}
+
+/* Datenstandort */
+.ort{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:clamp(24px,4vw,56px);align-items:start}
+.ort .kopfzeile{margin-bottom:26px}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:var(--r);border:1px solid var(--edge);background:var(--panel)}
+.seg button{min-height:42px;padding:0 14px;border-radius:var(--r-s);border:0;background:transparent;color:var(--ink-muted);font:600 14.5px var(--f-sans);cursor:pointer;transition:background-color .15s,color .15s}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.fakten{margin:26px 0 0;border-top:1px solid var(--edge)}
+.fakten div{display:grid;gap:2px;padding:14px 0;border-bottom:1px solid var(--edge)}
+.fakten dt{font:500 12px var(--f-mono);color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em}
+.fakten dd{margin:0;font-weight:600;font-size:17px}
+.fakten dd small{display:block;font-weight:400;font-size:14.5px;color:var(--ink-muted)}
+.diagramm{margin:0;border:1px solid var(--edge);border-radius:var(--r-l);background:var(--canvas);padding:10px;overflow-x:auto}
+.diagramm svg{display:block;width:100%;min-width:600px;height:auto}
+.diagramm figcaption{padding:8px 6px 2px;font:400 12px var(--f-mono);color:var(--ink-dim)}
+.z-rahmen{fill:rgba(18,26,20,.35);stroke:var(--edge-2);stroke-width:1.5;stroke-dasharray:6 4}
+.z-label{fill:var(--accent);font:600 12px var(--f-mono)}
+.z-sub{fill:var(--ink-dim);font:400 11px var(--f-mono)}
+.box{fill:var(--panel);stroke:rgba(168,188,171,.55);stroke-width:1.5}
+.box.akzent{stroke:var(--accent)}
+.b-label{fill:var(--ink);font:600 13px var(--f-mono)}
+.b-sub{fill:var(--ink-muted);font:400 11px var(--f-mono)}
+.weg{fill:none;stroke:rgba(163,230,53,.75);stroke-width:1.5}
+.weg.zurueck{stroke:rgba(125,211,252,.7)}
+.weg.leicht{stroke:rgba(168,188,171,.55);stroke-dasharray:4 5}
+.w-label{font:500 11px var(--f-mono);fill:var(--accent)}
+.w-label.zurueck{fill:var(--idea)}
+.w-label.leicht{fill:var(--ink-dim)}
+.paket{fill:var(--accent)}.paket.text{fill:var(--idea)}.paket.zaehler{fill:var(--ink-muted)}
+.paket-label{font:600 11px var(--f-mono);fill:var(--accent)}.paket-label.text{fill:var(--idea)}.paket-label.zaehler{fill:var(--ink-muted)}
+@media (max-width:980px){.ort{grid-template-columns:1fr}}
+
+/* IT */
+.it{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,3vw,40px);align-items:start}
+.features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;list-style:none;margin:0;padding:0}
+.feature{display:grid;gap:8px;align-content:start;padding:18px;border-radius:var(--r);border:1px solid var(--edge);background:var(--panel);transition:border-color .2s}
+.feature:hover{border-color:rgba(163,230,53,.6)}
+.feature .ico{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:1.7;stroke-linecap:square;stroke-linejoin:miter}
+.feature p{font-size:15px;color:var(--ink-muted)}
+.spot{position:relative;isolation:isolate}
+.spot::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(340px circle at var(--mx,50%) var(--my,-30%),rgba(163,230,53,.11),transparent 60%);opacity:0;transition:opacity .3s}
+.spot:hover::before{opacity:1}
+.terminal{position:sticky;top:88px;border-radius:var(--r-l);border:1px solid var(--edge);background:#060a07;overflow:hidden;box-shadow:0 40px 80px -40px rgba(0,0,0,.9)}
+.term-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--edge);background:var(--panel)}
+.term-tabs{display:flex;gap:4px;margin-left:6px;overflow-x:auto}
+.term-tab{min-height:34px;padding:0 11px;border-radius:var(--r-s);border:1px solid transparent;background:none;color:var(--ink-muted);font:500 12.5px var(--f-mono);cursor:pointer;white-space:nowrap}
+.term-tab:hover{color:var(--ink)}
+.term-tab[aria-selected="true"]{color:var(--accent);border-color:var(--edge-2);background:var(--canvas)}
+.term-body{padding:16px 16px 20px;min-height:280px;font:400 13.5px/1.8 var(--f-mono);overflow-x:auto}
+.term-body .z{white-space:pre}
+.t-prompt{color:var(--accent)}.t-ok{color:var(--live)}.t-info{color:var(--idea)}.t-dim{color:var(--ink-dim)}
+@media (max-width:980px){.it{grid-template-columns:1fr}.terminal{position:static}}
+@media (max-width:560px){.features{grid-template-columns:1fr}}
+
+/* Portal */
+.browser{border-radius:var(--r-l);border:1px solid var(--edge);background:var(--panel);overflow:hidden;box-shadow:0 40px 90px -45px rgba(0,0,0,.9)}
+.browser-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--edge);background:var(--panel-2)}
+.url{flex:1;max-width:440px;padding:6px 10px;border-radius:var(--r-s);border:1px solid var(--edge);background:var(--canvas);font:400 12.5px var(--f-mono);color:var(--ink-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.portal{display:grid;grid-template-columns:210px minmax(0,1fr);min-height:400px}
+.portal-nav{display:grid;gap:4px;align-content:start;padding:14px 10px;border-right:1px solid var(--edge)}
+.portal-firma{padding:4px 10px 12px;font:600 13px var(--f-mono);color:var(--ink)}
+.portal-firma small{display:block;font-weight:400;color:var(--ink-dim)}
+.portal-nav button{min-height:40px;text-align:left;padding:0 12px;border-radius:var(--r-s);border:0;background:none;color:var(--ink-muted);font:500 14.5px var(--f-sans);cursor:pointer}
+.portal-nav button:hover{color:var(--ink)}
+.portal-nav button[aria-selected="true"]{background:var(--panel-2);color:var(--accent)}
+.portal-main{padding:18px;min-width:0}
+.portal-main h3{margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.kpi{display:grid;gap:2px;padding:14px;border-radius:var(--r);border:1px solid var(--edge);background:var(--canvas)}
+.kpi b{font:600 30px/1.1 var(--f-sans);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi span{font-size:13.5px;color:var(--ink-muted)}
+.chart{display:grid;grid-template-columns:26px 1fr;gap:8px}
+.chart-y{display:flex;flex-direction:column;justify-content:space-between;height:146px;margin-top:-6px;font:400 11px var(--f-mono);color:var(--ink-dim);text-align:right}
+.chart-f{position:relative;height:140px;display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:5px;align-items:end;background:linear-gradient(var(--edge),var(--edge)) 0 0/100% 1px no-repeat,linear-gradient(var(--edge),var(--edge)) 0 50%/100% 1px no-repeat,linear-gradient(var(--ink-dim),var(--ink-dim)) 0 100%/100% 1px no-repeat}
+.chart-f i{display:block;height:var(--h);background:rgba(163,230,53,.55);transform-origin:50% 100%}
+.chart-f i.heute{background:var(--accent)}
+.chart-f.wachsen i{animation:wachsen-y .9s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--d,0) * 40ms)}
+@keyframes wachsen-y{from{transform:scaleY(0)}}
+.chart-x{grid-column:2;display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:5px;font:400 10.5px var(--f-mono);color:var(--ink-dim);text-align:center}
+.notiz{margin-top:12px;font-size:13px;color:var(--ink-dim)}
+.tabelle{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+.portal table{min-width:560px}
+th{padding:8px 10px;border-bottom:1px solid var(--edge);text-align:left;font:500 11.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);white-space:nowrap}
+td{padding:11px 10px;border-bottom:1px solid var(--edge);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.rechts{text-align:right}
+.mini{min-height:34px;padding:0 11px;border-radius:var(--r-s);border:1px solid var(--edge-2);background:var(--canvas);color:var(--ink);font:500 13px var(--f-sans);cursor:pointer;white-space:nowrap}
+.mini:hover{border-color:var(--accent);color:var(--accent)}
+.mini.primaer{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (max-width:760px){.portal{grid-template-columns:1fr}.portal-nav{grid-auto-flow:column;grid-auto-columns:max-content;overflow-x:auto;border-right:0;border-bottom:1px solid var(--edge)}.portal-firma{display:none}}
+@media (max-width:560px){.kpis{grid-template-columns:1fr}.kpi{grid-template-columns:auto 1fr;align-items:baseline;gap:10px}}
+
+/* Wörterbuch */
+.wb{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(20px,3vw,40px);align-items:start}
+.feld{display:grid;gap:6px}
+.feld label{font-weight:500;font-size:14.5px}
+.feld label small{font-weight:400;color:var(--ink-dim)}
+input,select,textarea{width:100%;font:400 16px var(--f-sans);color:var(--ink);background:var(--panel);border:1px solid var(--edge-2);border-radius:var(--r-s);padding:12px 13px;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(163,230,53,.18)}
+input[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:var(--danger)}
+.gross{font:500 18px var(--f-mono);padding:14px 15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-btn{min-height:36px;padding:0 12px;border-radius:var(--r-s);border:1px solid var(--edge-2);background:var(--panel);color:var(--ink);font:500 13px var(--f-mono);cursor:pointer}
+.chip-btn:hover{border-color:var(--accent);color:var(--accent)}
+.wb-links{display:grid;gap:22px}
+.reihe-add{display:grid;grid-template-columns:1fr auto;gap:8px}
+.begriffe{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.ausgabe{border-radius:var(--r-l);border:1px solid var(--edge);background:#060a07;overflow:hidden}
+.ausgabe-log{padding:16px;font:400 13px/1.8 var(--f-mono);min-height:150px;overflow-x:auto}
+.ausgabe-log .z{white-space:pre-wrap;word-break:break-word}
+.ergebnis{padding:18px 16px;border-top:1px solid var(--edge);background:var(--panel);font-size:20px;font-weight:500;letter-spacing:-.01em;min-height:72px}
+.ergebnis mark{background:transparent;color:var(--accent);border-bottom:2px solid var(--accent);padding-bottom:1px}
+.ergebnis-label{display:block;margin-bottom:4px;font:500 12px var(--f-mono);color:var(--ink-dim)}
+@media (max-width:920px){.wb{grid-template-columns:1fr}}
+
+/* Preise */
+.rechner{display:grid;gap:22px}
+.regler-zeile{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;padding:20px;border-radius:var(--r);border:1px solid var(--edge);background:var(--panel)}
+.regler-zeile label{font-weight:500}
+.regler-zahl{font:600 34px/1 var(--f-mono);color:var(--accent);min-width:3.2ch}
+input[type="range"]{flex:1;min-width:200px;padding:0;border:0;background:transparent;accent-color:var(--accent);height:30px;box-shadow:none}
+.plaene{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.plan{display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:var(--r);border:1px solid var(--edge);background:var(--panel);transition:border-color .25s,box-shadow .25s,opacity .25s}
+.plan.empfohlen{border-color:var(--accent);box-shadow:0 0 0 1px rgba(163,230,53,.35),0 0 50px -16px rgba(163,230,53,.45)}
+.plan.aus{opacity:.5}
+.plan-kopf{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.plan-name{font:600 13px var(--f-mono);color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
+.plan-preis{font:600 15px var(--f-sans);color:var(--ink-muted)}
+.plan-summe b{display:block;font:650 40px/1.05 var(--f-sans);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.plan-summe span{font-size:14px;color:var(--ink-muted)}
+.plan ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:15px;color:var(--ink-muted)}
+.plan li{display:grid;grid-template-columns:18px 1fr;gap:8px}
+.plan li::before{content:"✓";font:600 13px var(--f-mono);color:var(--live)}
+.plan .btn{margin-top:auto}
+.preis-fuss{font-size:13.5px;color:var(--ink-dim)}
+@media (max-width:900px){.plaene{grid-template-columns:1fr}}
+
+/* Ablauf */
+.ablauf{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;list-style:none;margin:0;padding:0}
+.ablauf::before,.ablauf::after{content:"";position:absolute;left:0;right:0;top:9px;height:2px}
+.ablauf::before{background:var(--edge)}
+.ablauf::after{background:var(--accent);transform-origin:0 50%}
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    .ablauf::after{animation:wachsen-x linear both;animation-timeline:view();animation-range:entry 20% cover 55%;transform:scaleX(0)}
+  }
+}
+.ablauf li{position:relative;display:grid;gap:8px;align-content:start;padding-top:36px}
+.ablauf li::before{content:"";position:absolute;top:0;left:0;z-index:1;width:20px;height:20px;background:var(--canvas);border:2px solid var(--accent)}
+.ablauf .wann{font:500 12.5px var(--f-mono);color:var(--accent)}
+.ablauf p{color:var(--ink-muted);font-size:15.5px}
+@media (max-width:900px){.ablauf{grid-template-columns:repeat(2,minmax(0,1fr))}.ablauf::before,.ablauf::after{display:none}}
+@media (max-width:520px){.ablauf{grid-template-columns:1fr}}
+
+/* FAQ */
+.faq{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,5vw,72px);align-items:start}
+.faq .kopfzeile{margin-bottom:0}
+.faq-liste{border-top:1px solid var(--edge)}
+details{border-bottom:1px solid var(--edge)}
+summary{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:44px;padding:18px 2px;cursor:pointer;list-style:none;font-weight:500;font-size:17.5px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";flex:none;font:400 22px/1 var(--f-mono);color:var(--accent);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+summary:hover{color:var(--accent)}
+details p{padding:0 2px 20px;color:var(--ink-muted);max-width:64ch}
+@media (max-width:860px){.faq{grid-template-columns:1fr}}
+
+/* Pilot */
+.pilot{position:relative;overflow:hidden}
+.pilot .blob{opacity:.8}
+.pilot-in{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:start}
+.danach{display:grid;gap:12px;list-style:none;margin:0;padding:0;counter-reset:d}
+.danach li{display:grid;grid-template-columns:30px 1fr;gap:12px;color:var(--ink-muted);counter-increment:d}
+.danach li::before{content:counter(d);display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--edge-2);font:600 12.5px var(--f-mono);color:var(--accent)}
+.kontakt{margin-top:24px;font:400 14px var(--f-mono);color:var(--ink-dim)}
+.kontakt b{color:var(--ink);font-weight:500;user-select:all}
+.formular{display:grid;gap:16px;padding:clamp(20px,3vw,28px);border-radius:var(--r-l);border:1px solid var(--edge);background:rgba(18,26,20,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.formular .reihe{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.fehler-text{font-size:13px;color:var(--danger)}
+.fehler-text:empty{display:none}
+textarea{resize:vertical;min-height:90px}
+.einw{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:13.5px;color:var(--ink-muted);align-items:start}
+.einw input{width:18px;height:18px;margin:2px 0 0;padding:0;accent-color:var(--accent)}
+.honig{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.formular .btn{justify-self:start}
+.meldung{font-size:14.5px;min-height:1.4em}
+.meldung.ok{color:var(--live)}
+@media (max-width:920px){.pilot-in{grid-template-columns:1fr}}
+@media (max-width:520px){.formular .reihe{grid-template-columns:1fr}}
+
+.fuss{border-top:1px solid var(--edge);padding-block:34px;font-size:14px;color:var(--ink-muted)}
+.fuss-in{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px 28px}
+.fuss nav{display:flex;flex-wrap:wrap;gap:8px 22px}
+.fuss .mono{font-size:12.5px;color:var(--ink-dim)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .laufband-in{width:auto}
+  .laufband ul{flex-wrap:wrap;white-space:normal;row-gap:6px}
+  .laufband ul[aria-hidden="true"]{display:none}
+  .paket,.paket-label{display:none}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="zeichen" viewBox="0 0 64 64">
+    <rect width="64" height="64" rx="3" style="fill:var(--z-grund,#a3e635);stroke:var(--z-rand,none)" stroke-width="3"/>
+    <g style="fill:var(--z-tinte,#0a0f0b)"><rect x="18" y="10" width="28" height="5"/><rect x="18" y="49" width="28" height="5"/><rect x="18.2" y="27" width="3.6" height="10"/><rect x="24.2" y="22" width="3.6" height="20"/><rect x="30.2" y="17" width="3.6" height="30"/><rect x="36.2" y="21" width="3.6" height="22"/><rect x="42.2" y="26" width="3.6" height="12"/></g>
+  </symbol>
+  <symbol id="wort" viewBox="0 0 112 30">
+    <g fill="none" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter">
+      <path d="M3.5 7.5V22.5H8M1.5 13.5H7.5M14 13.5H23V22.5H14ZM29 22.5V13.5H38V22.5" style="stroke:var(--w-ton,#a3e635)"/>
+      <path d="M46 22.5V7.5H51.5M44 13.5H50M66.5 22.5H57.5V13.5H66.5V18H57.5M81.5 7.5V22.5H72.5V13.5H81.5M96.5 22.5H87.5V13.5H96.5V18H87.5M102.5 22.5V13.5H109.5V16.5" style="stroke:var(--w-feder,#e8f0e9)"/>
+    </g>
+  </symbol>
+  <symbol id="logo" viewBox="0 0 150 30"><use href="#zeichen" x="0" y="1" width="28" height="28"/><use href="#wort" x="38" y="0" width="112" height="30"/></symbol>
+  <symbol id="haken" viewBox="0 0 12 12"><path d="M2 6.5L5 9.5L10 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></symbol>
+</svg>
+
+<div class="fortschritt" aria-hidden="true"></div>
+<div class="entwurf">Designentwurf · Arbeitstitel „Tonfeder“ · Preise sind Planungsstand · Fotos: Unsplash</div>
+
+<header class="kopf">
+  <div class="wrap kopf-in">
+    <a class="marke" href="#top" aria-label="Tonfeder, zum Seitenanfang"><svg aria-hidden="true"><use href="#logo"/></svg></a>
+    <nav class="nav" aria-label="Hauptnavigation">
+      <a href="#einsatz">Einsatz</a>
+      <a href="#desktop">Desktop</a>
+      <a href="#ort">Datenstandort</a>
+      <a href="#it">Für die IT</a>
+      <a href="#woerterbuch">Wörterbuch</a>
+      <a href="#preise">Preise</a>
+    </nav>
+    <a class="btn btn-accent btn-sm" href="#pilot">Pilot starten</a>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="mnav">
+      <span class="sr">Menü öffnen</span>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg>
+    </button>
+  </div>
+  <nav class="mnav" id="mnav" aria-label="Hauptnavigation mobil" hidden>
+    <ul class="wrap">
+      <li><a href="#einsatz">Einsatz</a></li>
+      <li><a href="#so">So geht’s</a></li>
+      <li><a href="#desktop">Desktop</a></li>
+      <li><a href="#ort">Datenstandort</a></li>
+      <li><a href="#it">Für die IT</a></li>
+      <li><a href="#woerterbuch">Wörterbuch</a></li>
+      <li><a href="#preise">Preise</a></li>
+      <li><a href="#fragen">Fragen</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="h-hero">
+    <div class="hero-bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="gitter"></div></div>
+    <div class="wrap hero-in">
+      <div class="hero-text">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder --listen</p>
+        <h1 id="h-hero">Gesagt.<br><span class="hl">Geschrieben.</span><span class="cursor-block" aria-hidden="true"></span></h1>
+        <p class="lead">Taste halten, sprechen, loslassen. Tonfeder schreibt Ihren Text dorthin, wo der Cursor steht. <b>Verarbeitet in Deutschland oder in Ihrem eigenen Netz</b>, verteilt von Ihrer IT wie jede andere Software.</p>
+        <div class="ctas">
+          <a class="btn btn-accent" href="#pilot">30 Tage Pilot starten <span class="pfeil" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost" href="#desktop">So sieht es aus</a>
+        </div>
+        <ul class="badges" aria-label="Kurz gesagt">
+          <li class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>Server in Deutschland</li>
+          <li class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>Kein Ton gespeichert</li>
+          <li class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>ab 1,50 € pro Person</li>
+        </ul>
+      </div>
+
+      <div class="demo" id="demo" aria-label="Interaktive Vorführung">
+        <div class="win-wrap">
+          <div class="win">
+            <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Neue E-Mail</span><span class="badge" title="Verarbeitet in Deutschland"><svg aria-hidden="true"><use href="#haken"/></svg>DE</span></div>
+            <dl class="win-meta">
+              <dt>An</dt><dd>Mehmet Yilmaz</dd>
+              <dt>Betreff</dt><dd>AW: Messprotokoll Halle 3</dd>
+            </dl>
+            <div class="win-body" id="demo-text" aria-live="polite">
+              <p>Guten Tag Herr Yilmaz,</p>
+              <p class="vorab"><span>die Messwerte der Lüftungsanlage in Halle 3 liegen vor. Alle Werte liegen im Rahmen der DIN EN 16798.</span><span class="caret" aria-hidden="true"></span></p>
+            </div>
+          </div>
+          <div class="pill" id="demo-pill" data-z="fertig">
+            <span class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span class="pill-text">Eingefügt</span>
+            <span class="pill-zeit">1,4 s</span>
+          </div>
+        </div>
+        <div class="steuer">
+          <canvas class="wave" aria-hidden="true"></canvas>
+          <button class="hold" id="hold" type="button" aria-pressed="false" aria-describedby="hold-hint"><kbd class="key">Strg</kbd><span>Gedrückt halten und sprechen</span></button>
+          <div class="steuer-fuss">
+            <span id="hold-hint">Satz 2 von 3 · Maus, Finger, Leertaste oder rechte Strg-Taste</span>
+            <button class="textlink" id="demo-neu" type="button" hidden>Neue E-Mail</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="laufband" aria-label="Funktioniert in jedem Textfeld">
+    <div class="laufband-in">
+      <ul><li>E-Mail</li><li>CRM</li><li>Word</li><li>Teams</li><li>Browser</li><li>ERP</li><li>Ticketsystem</li><li>Excel-Zelle</li><li>Webformular</li><li>Terminalserver</li><li>Citrix</li><li>Notizen</li></ul>
+      <ul aria-hidden="true"><li>E-Mail</li><li>CRM</li><li>Word</li><li>Teams</li><li>Browser</li><li>ERP</li><li>Ticketsystem</li><li>Excel-Zelle</li><li>Webformular</li><li>Terminalserver</li><li>Citrix</li><li>Notizen</li></ul>
+    </div>
+  </div>
+
+  <!-- EINSATZ -->
+  <section class="abschnitt" id="einsatz" aria-labelledby="h-einsatz">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>who --diktiert</p>
+        <h2 id="h-einsatz">Überall, wo heute <span class="hl">getippt</span> wird.</h2>
+        <p class="sub">Berichte beim Kunden, Notizen zwischen zwei Terminen, E-Mails im Büro. Tonfeder schreibt in das Programm, das gerade offen ist.</p>
+      </div>
+      <div class="persona reveal">
+        <div class="p-tabs" role="tablist" aria-label="Einsatzbereiche">
+          <button class="p-tab" role="tab" id="pt-0" aria-controls="p-panel" aria-selected="true"><span class="pfad">~/service</span><b>Service</b><span class="unter">Berichte direkt beim Kunden</span><span class="lauf" aria-hidden="true"></span></button>
+          <button class="p-tab" role="tab" id="pt-1" aria-controls="p-panel" aria-selected="false" tabindex="-1"><span class="pfad">~/werkstatt</span><b>Werkstatt</b><span class="unter">Prüfprotokolle ohne Tippen</span><span class="lauf" aria-hidden="true"></span></button>
+          <button class="p-tab" role="tab" id="pt-2" aria-controls="p-panel" aria-selected="false" tabindex="-1"><span class="pfad">~/lager</span><b>Lager</b><span class="unter">Wareneingang mit Tablet</span><span class="lauf" aria-hidden="true"></span></button>
+          <button class="p-tab" role="tab" id="pt-3" aria-controls="p-panel" aria-selected="false" tabindex="-1"><span class="pfad">~/aussendienst</span><b>Außendienst</b><span class="unter">Notizen zwischen zwei Terminen</span><span class="lauf" aria-hidden="true"></span></button>
+          <button class="p-tab" role="tab" id="pt-4" aria-controls="p-panel" aria-selected="false" tabindex="-1"><span class="pfad">~/buero</span><b>Büro</b><span class="unter">E-Mails in einem Rutsch</span><span class="lauf" aria-hidden="true"></span></button>
+        </div>
+        <div class="p-buehne" id="p-panel" role="tabpanel" aria-labelledby="pt-0">
+          <img class="an" src="img/service.webp" alt="Elektriker mit gelbem Schutzhelm prüft einen Schaltkasten." width="1400" height="1050" decoding="async">
+          <img src="img/werkstatt.webp" alt="Laptop auf einer Werkbank, umgeben von Werkzeugen." width="1400" height="1050" loading="lazy" decoding="async">
+          <img src="img/lager.webp" alt="Mann mit Weste liest im Lager auf einem Tablet." width="1400" height="1050" loading="lazy" decoding="async">
+          <img src="img/aussendienst.webp" alt="Frau sitzt im offenen Kofferraum eines Transporters und arbeitet auf einem Tablet." width="1400" height="1050" loading="lazy" decoding="async">
+          <img src="img/buero.webp" alt="Frau mit Headset lächelt vor ihrem Laptop im Büro." width="1400" height="1050" loading="lazy" decoding="async">
+          <div class="pill" id="p-pill" data-z="fertig">
+            <span class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span class="pill-text">Eingefügt</span>
+            <span class="pill-zeit">1,9 s</span>
+          </div>
+          <div class="p-karte">
+            <div class="p-karte-kopf"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="p-app">Servicebericht · Auftrag 24-1187</span></div>
+            <p class="p-text" id="p-text">Kältekreis geprüft, Drücke im Sollbereich. Verdampfer gereinigt und Filtertrockner getauscht. Nächste Wartung im März.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SO GEHT'S -->
+  <section class="abschnitt" id="so" aria-labelledby="h-so" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder --help</p>
+        <h2 id="h-so">Drei Handgriffe. <span class="hl">Keine Schulung.</span></h2>
+        <p class="sub">Tonfeder sitzt in der Taskleiste. Es gibt kein Fenster, das man öffnen muss, und keine Oberfläche, die man lernen muss.</p>
+      </div>
+      <div class="bento">
+        <div class="foto-karte reveal">
+          <img src="img/mikrofon.webp" alt="Schwarzes Mikrofon vor dunklem Hintergrund." width="1200" height="1400" loading="lazy" decoding="async">
+          <div class="foto-over">
+            <ul class="zahlen">
+              <li><b>15 min</b>am Stück diktieren</li>
+              <li><b>DE+EN</b>automatisch erkannt, auch gemischt</li>
+              <li><b>¶</b>Sprachbefehle wie „neuer Absatz“</li>
+            </ul>
+          </div>
+        </div>
+        <ol class="schritte">
+          <li class="schritt spot reveal">
+            <div class="vis" aria-hidden="true"><kbd class="key">Strg</kbd></div>
+            <div><span class="nr">Schritt 1</span><h3>Taste halten</h3><p>Die rechte Strg-Taste braucht sonst kaum jemand. Ihre IT kann sie für alle ändern.</p></div>
+          </li>
+          <li class="schritt spot reveal">
+            <div class="vis" aria-hidden="true"><span class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+            <div><span class="nr">Schritt 2</span><h3>Sprechen</h3><p>So, wie Sie reden. Mit Pausen, Zahlen und Fachbegriffen. Satzzeichen setzt Tonfeder selbst.</p></div>
+          </li>
+          <li class="schritt spot reveal">
+            <div class="vis" aria-hidden="true"><span class="tipp">… 12 Uhr.<span class="caret"></span></span></div>
+            <div><span class="nr">Schritt 3</span><h3>Loslassen</h3><p>Nach ein bis zwei Sekunden steht der Text am Cursor, in jedem Programm, in das Sie auch tippen können.</p></div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESKTOP -->
+  <section class="abschnitt" id="desktop" aria-labelledby="h-desktop" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder --tray</p>
+        <h2 id="h-desktop">So sieht Tonfeder <span class="hl">auf Ihrem Desktop</span> aus.</h2>
+        <p class="sub">Ein Symbol neben der Uhr, eine kleine Anzeige über der Taskleiste, ein Fenster für Einstellungen. Mehr gibt es nicht. Klicken Sie auf das Tray-Symbol, ziehen Sie die Anzeige oder spielen Sie ein Diktat ab.</p>
+      </div>
+      <div class="desk-rahmen reveal" id="desk-rahmen">
+        <div class="desk-groesse" id="desk-groesse">
+          <div class="desk" id="desk" data-tray="bereit" role="group" aria-label="Nachgebauter Desktop mit Tonfeder">
+            <img class="desk-bild" src="img/wald-nebel.webp" alt="" width="1600" height="1000" loading="lazy" decoding="async">
+            <div class="desk-icons" aria-hidden="true">
+              <div class="d-icon"><svg viewBox="0 0 40 34"><path d="M1 4h14l4 4h20v25H1z" fill="#e8c35a"/><path d="M1 11h38v22H1z" fill="#f4d675"/></svg>Protokolle</div>
+              <div class="d-icon"><svg viewBox="0 0 40 34"><path d="M1 4h14l4 4h20v25H1z" fill="#e8c35a"/><path d="M1 11h38v22H1z" fill="#f4d675"/></svg>Angebote</div>
+            </div>
+
+            <div class="dw dw-editor" id="dw-editor">
+              <div class="dw-bar"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="1" width="12" height="14" fill="#2b579a"/><path d="M5 5h6M5 8h6M5 11h4" stroke="#fff" stroke-width="1.4"/></svg><span>Servicebericht 24-1187 · Textverarbeitung</span><span class="dw-knoepfe" aria-hidden="true"><span>—</span><span>☐</span><span>✕</span></span></div>
+              <div class="ed-menue" aria-hidden="true"><span>Datei</span><span>Bearbeiten</span><span>Einfügen</span><span>Format</span><span>Ansicht</span></div>
+              <div class="ed-werkzeug" aria-hidden="true"><span>B</span><span><i>I</i></span><span><u>U</u></span><span>≡</span><span>•</span></div>
+              <div class="ed-seite">
+                <h4>Servicebericht · Auftrag 24-1187</h4>
+                <p class="klein">Kunde: Halbach Kältetechnik GmbH · Anlage: FrostLine 300, Halle 3 · 16.10.2026</p>
+                <p><b>Befund:</b> <span id="ed-text">Bei Ankunft Hochdruckstörung, quittiert und Anlage neu gestartet.<span class="caret" aria-hidden="true"></span></span></p>
+              </div>
+              <span class="marker" style="left:24px;top:194px" aria-hidden="true">3</span>
+            </div>
+
+            <div class="dw dw-einst" id="dw-einst" role="dialog" aria-labelledby="einst-titel" hidden>
+              <div class="dw-bar"><svg aria-hidden="true"><use href="#zeichen"/></svg><span id="einst-titel">Tonfeder · Einstellungen</span><span class="dw-knoepfe"><button type="button" class="dw-x" aria-label="Einstellungen schließen">✕</button></span></div>
+              <div class="einst">
+                <div class="einst-nav" role="tablist" aria-label="Einstellungen" aria-orientation="vertical">
+                  <button role="tab" id="et-0" aria-controls="es-0" aria-selected="true">Allgemein</button>
+                  <button role="tab" id="et-1" aria-controls="es-1" aria-selected="false" tabindex="-1">Meine Begriffe</button>
+                  <button role="tab" id="et-2" aria-controls="es-2" aria-selected="false" tabindex="-1">Info</button>
+                </div>
+                <div class="einst-inhalt">
+                  <div role="tabpanel" id="es-0" aria-labelledby="et-0">
+                    <div class="e-zeile"><span>Taste</span><span><kbd class="key">Strg</kbd> rechts<small>von Ihrer IT festgelegt</small></span></div>
+                    <div class="e-zeile"><label for="e-mic">Mikrofon</label><select id="e-mic"><option>Headset (USB)</option><option>Laptop-Mikrofon</option></select></div>
+                    <div class="e-zeile"><label for="e-sprache">Sprache</label><select id="e-sprache"><option>Automatisch</option><option>Deutsch</option><option>Englisch</option></select></div>
+                    <div class="e-zeile"><span>Einfügen</span><span class="seg-klein" role="group" aria-label="Einfügemodus"><button type="button" aria-pressed="true">Zwischenablage</button><button type="button" aria-pressed="false">Tippen</button></span></div>
+                    <div class="e-zeile"><span id="e-auto">Mit Windows starten</span><button type="button" class="schalter" role="switch" aria-checked="true" aria-labelledby="e-auto"><i></i></button></div>
+                  </div>
+                  <div role="tabpanel" id="es-1" aria-labelledby="et-1" hidden>
+                    <form class="e-add" id="e-add"><label class="sr" for="e-neu">Neuer Begriff</label><input id="e-neu" placeholder="Begriff hinzufügen" autocomplete="off"><button type="submit">Hinzufügen</button></form>
+                    <ul class="e-liste" id="e-liste">
+                      <li><span>Kälteanlage Nord</span><button type="button">für alle vorschlagen</button></li>
+                      <li><span>Frau Okafor</span><button type="button">für alle vorschlagen</button></li>
+                      <li><span>Hochdruckpressostat</span><button type="button">für alle vorschlagen</button></li>
+                    </ul>
+                  </div>
+                  <div role="tabpanel" id="es-2" aria-labelledby="et-2" hidden>
+                    <dl class="e-info"><dt>Version</dt><dd>1.4.2</dd><dt>Firma</dt><dd>Halbach Kältetechnik</dd><dt>Gerät</dt><dd>NB-SERVICE-11</dd><dt>Datenstandort</dt><dd>DE · Nürnberg</dd><dt>Updates</dt><dd>von Ihrer IT, Kanal stabil</dd></dl>
+                  </div>
+                </div>
+              </div>
+              <span class="marker" style="right:10px;top:46px" aria-hidden="true">4</span>
+            </div>
+
+            <div class="tray-menue" id="tray-menue" role="menu" aria-label="Tonfeder-Menü" hidden>
+              <div class="tm-kopf"><svg aria-hidden="true"><use href="#zeichen"/></svg><div><b>Tonfeder</b><small>Halbach Kältetechnik · NB-SERVICE-11</small></div></div>
+              <div class="tm-status"><span id="tm-status">Bereit</span><span>Cloud DE · Nürnberg</span></div>
+              <button type="button" role="menuitem" data-aktion="erneut">Letztes Diktat erneut einfügen</button>
+              <button type="button" role="menuitem" data-aktion="begriffe">Meine Begriffe …</button>
+              <button type="button" role="menuitem" data-aktion="einstellungen">Einstellungen …</button>
+              <button type="button" role="menuitem" data-aktion="pause" id="tm-pause">Pause für 1 Stunde</button>
+              <hr>
+              <button type="button" role="menuitem" data-aktion="beenden">Beenden</button>
+              <p class="tm-fuss mono">Version 1.4.2 · Updates von Ihrer IT</p>
+            </div>
+
+            <div class="pill desk-pill" id="desk-pill" data-z="bereit" tabindex="0" role="status" aria-label="Tonfeder-Anzeige, mit Pfeiltasten verschiebbar">
+              <span class="griff" aria-hidden="true">⋮⋮</span>
+              <span class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              <span class="pill-text">Bereit</span>
+              <span class="pill-fort" aria-hidden="true"><i></i></span>
+              <span class="pill-zeit"></span>
+              <span class="pill-ort">DE</span>
+              <span class="marker" aria-hidden="true">2</span>
+            </div>
+
+            <div class="desk-toast" id="desk-toast" role="status" hidden></div>
+
+            <div class="taskleiste">
+              <div class="tb-mitte" aria-hidden="true">
+                <span class="tb-app"><svg viewBox="0 0 22 22"><rect x="2" y="2" width="18" height="18" fill="none" stroke="#cfd8d1" stroke-width="1.6"/><path d="M6 8h10M6 11h10M6 14h6" stroke="#cfd8d1" stroke-width="1.6"/></svg></span>
+                <span class="tb-app"><svg viewBox="0 0 22 22"><circle cx="9.5" cy="9.5" r="6" fill="none" stroke="#cfd8d1" stroke-width="1.8"/><path d="M14 14l5 5" stroke="#cfd8d1" stroke-width="1.8"/></svg></span>
+                <span class="tb-app"><svg viewBox="0 0 22 22"><path d="M2 5h7l2 2h9v11H2z" fill="#e8c35a"/></svg></span>
+                <span class="tb-app"><svg viewBox="0 0 22 22"><circle cx="11" cy="11" r="8.5" fill="none" stroke="#7dd3fc" stroke-width="1.8"/><path d="M2.5 11h17M11 2.5c3 3 3 14 0 17M11 2.5c-3 3-3 14 0 17" fill="none" stroke="#7dd3fc" stroke-width="1.4"/></svg></span>
+                <span class="tb-app"><svg viewBox="0 0 22 22"><rect x="2" y="5" width="18" height="12" fill="none" stroke="#cfd8d1" stroke-width="1.6"/><path d="M2 5l9 7 9-7" fill="none" stroke="#cfd8d1" stroke-width="1.6"/></svg></span>
+                <span class="tb-app offen"><svg viewBox="0 0 22 22"><rect x="4" y="2" width="14" height="18" fill="#2b579a"/><path d="M7 7h8M7 10h8M7 13h5" stroke="#fff" stroke-width="1.4"/></svg></span>
+              </div>
+              <div class="tb-rechts">
+                <span class="tb-glyph" aria-hidden="true">˄</span>
+                <button type="button" class="tray-btn" id="tray-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="tray-menue" aria-label="Tonfeder: Bereit"><svg aria-hidden="true"><use href="#zeichen"/></svg></button>
+                <span class="tb-glyph" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M1 6c4-4 10-4 14 0M3.5 8.5c2.5-2.5 6.5-2.5 9 0M6 11c1-1 3-1 4 0" fill="none" stroke="#cfd8d1" stroke-width="1.5"/><rect x="7" y="12.5" width="2" height="2" fill="#cfd8d1"/></svg></span>
+                <span class="tb-glyph" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 6h3l4-3v10l-4-3H2z" fill="#cfd8d1"/><path d="M11 5c1.5 1.5 1.5 4.5 0 6" fill="none" stroke="#cfd8d1" stroke-width="1.4"/></svg></span>
+                <span class="uhr mono" aria-hidden="true"><span id="d-zeit">09:41</span><span id="d-datum">16.10.2026</span></span>
+              </div>
+              <span class="marker" style="right:160px;top:-14px" aria-hidden="true">1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="desk-legende">
+        <ol class="legende-punkte">
+          <li><button type="button" data-legende="tray"><span class="nr">1</span><b>Tray-Symbol</b><span class="t">Zeigt den Zustand in der Farbe. Ein Klick öffnet das Menü.</span></button></li>
+          <li><button type="button" data-legende="pill"><span class="nr">2</span><b>Anzeige</b><span class="t">Erscheint beim Diktieren über der Taskleiste. Mit der Maus verschiebbar.</span></button></li>
+          <li><button type="button" data-legende="text"><span class="nr">3</span><b>Text am Cursor</b><span class="t">Landet dort, wo Sie gerade schreiben. Klick spielt ein Diktat ab.</span></button></li>
+          <li><button type="button" data-legende="einst"><span class="nr">4</span><b>Einstellungen</b><span class="t">Taste, Mikrofon, Sprache und eigene Begriffe.</span></button></li>
+        </ol>
+        <div class="zustaende">
+          <span class="label" id="l-zust">Alle Zustände der Anzeige</span>
+          <div class="z-chips" role="group" aria-labelledby="l-zust">
+            <button type="button" class="z-chip" data-z="bereit" aria-pressed="true">Bereit</button>
+            <button type="button" class="z-chip" data-z="hoert" aria-pressed="false">Hört zu</button>
+            <button type="button" class="z-chip" data-z="sendet" aria-pressed="false">Wird gesendet</button>
+            <button type="button" class="z-chip" data-z="schreibt" aria-pressed="false">Schreibt</button>
+            <button type="button" class="z-chip" data-z="fertig" aria-pressed="false">Eingefügt</button>
+            <button type="button" class="z-chip" data-z="stumm" aria-pressed="false">Kein Ton</button>
+            <button type="button" class="z-chip" data-z="zeit" aria-pressed="false">Noch 60 s</button>
+            <button type="button" class="z-chip" data-z="offline" aria-pressed="false">Offline</button>
+            <button type="button" class="z-chip" data-z="gesperrt" aria-pressed="false">Gesperrt</button>
+          </div>
+          <button type="button" class="btn btn-accent" id="desk-play">Diktat abspielen <span aria-hidden="true">▶</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BILDBAND DEUTSCHLAND -->
+  <section class="band band-gross" data-band aria-roledescription="Karussell" aria-label="Datenstandort Deutschland">
+    <div class="band-flaeche">
+      <figure class="band-slide an" aria-roledescription="Folie" aria-label="1 von 4">
+        <img src="img/nuernberg.webp" alt="Nürnberg zur blauen Stunde: Fachwerkhaus und Turm an der Pegnitz." width="1800" height="1000" loading="lazy" decoding="async">
+        <figcaption class="band-text"><div class="wrap"><p class="kicker"><span class="cmd">$ pwd</span> <span class="aus">→ /rechenzentrum/nuernberg</span></p><p class="band-satz">Ihre Sprache bleibt <span class="hl">in Deutschland.</span></p></div></figcaption>
+      </figure>
+      <figure class="band-slide" aria-roledescription="Folie" aria-label="2 von 4" aria-hidden="true">
+        <img src="img/server-gruen.webp" alt="Serverschrank mit grün leuchtenden Netzwerkkabeln." width="2000" height="1100" loading="lazy" decoding="async">
+        <figcaption class="band-text"><div class="wrap"><p class="kicker"><span class="cmd">$ tonfeder status --ort</span> <span class="aus">→ DE · Nürnberg · GPU bereit</span></p><p class="band-satz">Eigene Server. <span class="hl">Kein US-Anbieter</span> in der Kette.</p></div></figcaption>
+      </figure>
+      <figure class="band-slide" aria-roledescription="Folie" aria-label="3 von 4" aria-hidden="true">
+        <img src="img/server-kabel.webp" alt="Reihen von Serverschränken mit gebündelten Kabeln." width="1800" height="1000" loading="lazy" decoding="async">
+        <figcaption class="band-text"><div class="wrap"><p class="kicker"><span class="cmd">$ grep -r 'diktat' /var/log</span> <span class="aus">→ 0 Treffer</span></p><p class="band-satz">Kein Ton auf der Platte. <span class="hl">Kein Text in den Logs.</span></p></div></figcaption>
+      </figure>
+      <figure class="band-slide" aria-roledescription="Folie" aria-label="4 von 4" aria-hidden="true">
+        <img src="img/landschaft.webp" alt="Hügellandschaft mit Wäldern und einem Ort im Tal unter weitem Himmel." width="1800" height="1000" loading="lazy" decoding="async">
+        <figcaption class="band-text"><div class="wrap"><p class="kicker"><span class="cmd">$ tonfeder whois</span> <span class="aus">→ Sitz: Deutschland · AVV nach Art. 28 DSGVO</span></p><p class="band-satz">Gebaut in Deutschland. <span class="hl">Für den Mittelstand.</span></p></div></figcaption>
+      </figure>
+    </div>
+    <div class="band-steuer wrap">
+      <span class="band-zahl" aria-hidden="true"><b>01</b> / 04</span>
+      <button type="button" class="band-btn" data-schritt="-1" aria-label="Vorheriges Bild">←</button>
+      <button type="button" class="band-btn" data-schritt="1" aria-label="Nächstes Bild">→</button>
+      <button type="button" class="band-btn band-pause" aria-label="Automatischen Wechsel anhalten">❚❚</button>
+    </div>
+    <div class="band-lauf" aria-hidden="true"><i></i></div>
+  </section>
+
+  <!-- DATENSTANDORT -->
+  <section class="abschnitt" id="ort" aria-labelledby="h-ort">
+    <div class="wrap ort">
+      <div class="reveal">
+        <div class="kopfzeile">
+          <p class="kicker"><span aria-hidden="true">$ </span>tonfeder config --ort</p>
+          <h2 id="h-ort">Sie bestimmen, wo Ihre Sprache verarbeitet wird.</h2>
+          <p class="sub">Drei Betriebsarten, eine App. Umgestellt wird im Portal, auf den Rechnern ändert sich nichts.</p>
+        </div>
+        <div class="seg" role="group" aria-label="Betriebsart wählen">
+          <button type="button" data-ort="cloud" aria-pressed="true">Cloud DE</button>
+          <button type="button" data-ort="rz" aria-pressed="false">Ihr Rechenzentrum</button>
+          <button type="button" data-ort="box" aria-pressed="false">Tonfeder Box</button>
+        </div>
+        <dl class="fakten" aria-live="polite">
+          <div><dt>Ton verlässt Ihr Haus</dt><dd id="f-ton">Ja, verschlüsselt nach Nürnberg<small>und nirgendwo sonst hin</small></dd></div>
+          <div><dt>Gespeichert wird</dt><dd id="f-speicher">Nur Dauer und Anzahl<small>Ton und Text verwerfen wir nach der Rückgabe</small></dd></div>
+          <div><dt>Internet nötig</dt><dd id="f-netz">Ja, für jedes Diktat<small>rund 0,2 MB pro Minute Sprache</small></dd></div>
+        </dl>
+      </div>
+      <figure class="diagramm reveal">
+        <svg id="ort-svg" viewBox="0 0 720 390" role="img" aria-labelledby="ort-svg-titel">
+          <title id="ort-svg-titel">Datenfluss: Die App schickt Ton verschlüsselt zum Tonfeder-Server in Deutschland, die Erkennung läuft dort im Arbeitsspeicher, der Text geht zurück.</title>
+          <defs>
+            <marker id="pfeil-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#a3e635"/></marker>
+            <marker id="pfeil-b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#7dd3fc"/></marker>
+            <marker id="pfeil-c" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#80968a"/></marker>
+          </defs>
+          <rect class="z-rahmen" x="16" y="34" width="300" height="340" rx="3"/>
+          <text class="z-label" x="32" y="60" id="z-links">▣ Ihr Firmennetz</text>
+          <text class="z-sub" x="32" y="76" id="z-links-sub">Büro, Werkstatt, Homeoffice</text>
+          <rect class="z-rahmen" x="404" y="34" width="300" height="340" rx="3"/>
+          <text class="z-label" x="420" y="60" id="z-rechts">▣ Rechenzentrum Deutschland</text>
+          <text class="z-sub" x="420" y="76" id="z-rechts-sub">Nürnberg · docker compose</text>
+          <g id="g-cloud">
+            <rect class="box" x="76" y="170" width="180" height="60" rx="2"/>
+            <text class="b-label" x="166" y="196" text-anchor="middle">Tonfeder-App</text>
+            <text class="b-sub" x="166" y="214" text-anchor="middle">auf jedem Rechner</text>
+            <rect class="box" x="464" y="110" width="180" height="60" rx="2"/>
+            <text class="b-label" x="554" y="136" text-anchor="middle">Tonfeder-Server</text>
+            <text class="b-sub" x="554" y="154" text-anchor="middle">Firma · Wörterbuch</text>
+            <rect class="box akzent" x="464" y="260" width="180" height="60" rx="2"/>
+            <text class="b-label" x="554" y="286" text-anchor="middle">Erkennung</text>
+            <text class="b-sub" x="554" y="304" text-anchor="middle">GPU · nur im RAM</text>
+            <path id="c-a" class="weg" d="M256 186 C 350 186 370 126 462 126" marker-end="url(#pfeil-a)"/>
+            <path id="c-b" class="weg" d="M544 170 L544 258" marker-end="url(#pfeil-a)"/>
+            <path id="c-c" class="weg zurueck" d="M564 260 L564 172" marker-end="url(#pfeil-b)"/>
+            <path id="c-d" class="weg zurueck" d="M464 156 C 372 156 352 214 258 214" marker-end="url(#pfeil-b)"/>
+            <text class="w-label" x="314" y="148">Ton · TLS →</text>
+            <text class="w-label zurueck" x="300" y="246">← Text</text>
+          </g>
+          <g id="g-lokal" display="none">
+            <rect class="box" x="76" y="104" width="180" height="60" rx="2"/>
+            <text class="b-label" x="166" y="130" text-anchor="middle">Tonfeder-App</text>
+            <text class="b-sub" x="166" y="148" text-anchor="middle">auf jedem Rechner</text>
+            <rect class="box akzent" x="76" y="270" width="180" height="60" rx="2"/>
+            <text class="b-label" x="166" y="296" text-anchor="middle" id="lokal-titel">Tonfeder-Server</text>
+            <text class="b-sub" x="166" y="314" text-anchor="middle" id="lokal-sub">+ Erkennung · Container</text>
+            <rect class="box" x="464" y="190" width="180" height="60" rx="2"/>
+            <text class="b-label" x="554" y="216" text-anchor="middle">Verwaltung</text>
+            <text class="b-sub" x="554" y="234" text-anchor="middle">Portal · Updates</text>
+            <path id="l-a" class="weg" d="M150 164 L150 268" marker-end="url(#pfeil-a)"/>
+            <path id="l-b" class="weg zurueck" d="M182 270 L182 166" marker-end="url(#pfeil-b)"/>
+            <path id="l-c" class="weg leicht" d="M256 300 C 360 300 372 220 462 220" marker-end="url(#pfeil-c)"/>
+            <text class="w-label" x="92" y="222">Ton ↓</text>
+            <text class="w-label zurueck" x="192" y="222">Text ↑</text>
+            <text class="w-label leicht" x="284" y="324">nur Zähler &amp; Updates</text>
+          </g>
+          <circle id="paket" class="paket" r="5" cx="-20" cy="-20"/>
+          <text id="paket-label" class="paket-label" x="-40" y="-40">Ton</text>
+        </svg>
+        <figcaption>Schema ohne Ports und Hostnamen. Grün: Ton, Blau: Text.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- BILDBAND IT -->
+  <section class="band" data-band aria-roledescription="Karussell" aria-label="Rollout durch die IT">
+    <div class="band-flaeche">
+      <figure class="band-slide an" aria-roledescription="Folie" aria-label="1 von 2">
+        <img src="img/it-arbeitsplatz.webp" alt="Arbeitsplatz mit Monitor und Laptop in einem abgedunkelten Büro." width="2000" height="1100" loading="lazy" decoding="async">
+        <figcaption class="band-text"><div class="wrap"><p class="kicker"><span class="cmd">$ msiexec /i Tonfeder.msi /qn</span> <span class="aus">→ 61 Rechner · 0 Besuche am Arbeitsplatz</span></p><p class="band-satz">Ausgerollt <span class="hl">an einem Nachmittag.</span></p></div></figcaption>
+      </figure>
+      <figure class="band-slide" aria-roledescription="Folie" aria-label="2 von 2" aria-hidden="true">
+        <img src="img/it-monitore.webp" alt="Zwei Monitore mit Programmcode in einem dunklen Raum." width="2000" height="1100" loading="lazy" decoding="async">
+        <figcaption class="band-text"><div class="wrap"><p class="kicker"><span class="cmd">$ tonfeder devices --sperren NB-LAGER-07</span> <span class="aus">→ gesperrt</span></p><p class="band-satz">Ein Klick <span class="hl">sperrt ein Gerät.</span></p></div></figcaption>
+      </figure>
+    </div>
+    <div class="band-steuer wrap">
+      <span class="band-zahl" aria-hidden="true"><b>01</b> / 02</span>
+      <button type="button" class="band-btn" data-schritt="-1" aria-label="Vorheriges Bild">←</button>
+      <button type="button" class="band-btn" data-schritt="1" aria-label="Nächstes Bild">→</button>
+      <button type="button" class="band-btn band-pause" aria-label="Automatischen Wechsel anhalten">❚❚</button>
+    </div>
+    <div class="band-lauf" aria-hidden="true"><i></i></div>
+  </section>
+
+  <!-- IT -->
+  <section class="abschnitt" id="it" aria-labelledby="h-it">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder deploy</p>
+        <h2 id="h-it">Ihre IT verteilt es wie <span class="hl">jede andere Software.</span></h2>
+        <p class="sub">Keine Benutzerkonten, keine Passwörter, ein Portal für alle Einstellungen.</p>
+      </div>
+      <div class="it">
+        <ul class="features">
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H4z"/><path d="M8 20h8M12 16v4"/><path d="M9 10l2 2 4-4"/></svg><h3>MSI für Intune und GPO</h3><p>Stilles Setup mit Firmenschlüssel. Danach ist jeder Rechner verbunden.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v8H8z"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/><path d="M3 3l18 18"/></svg><h3>Ohne Benutzerkonten</h3><p>Jedes Gerät bekommt einen eigenen Zugang. Ein Klick im Portal sperrt ihn.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18v12H3z"/><path d="M7 20h10"/><path d="M8 10h3M13 10h3"/></svg><h3>Terminalserver und Citrix</h3><p>Diktieren in Remote-Sitzungen. Lokal am Client oder im Terminalserver selbst.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/><path d="M15 13h6v6h-6z"/></svg><h3>Admin-Portal zum Selbermachen</h3><p>Wörterbuch, Geräte, Datenstandort und Tasten stellen Sie selbst ein.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg><h3>Updates in Ihrem Takt</h3><p>Version pro Firma festlegen und erst an eine Testgruppe ausrollen.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><h3>Nutzung ohne Personenbezug</h3><p>Zahlen je Firma, nie je Person. Keine Inhalte, keine Namen, keine IP-Adressen.</p></li>
+        </ul>
+        <div class="terminal reveal" aria-label="Beispiel-Terminal">
+          <div class="term-bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <div class="term-tabs" role="tablist" aria-label="Verteilweg">
+              <button class="term-tab" role="tab" id="tt-intune" aria-controls="term-body" aria-selected="true" data-skript="intune">intune</button>
+              <button class="term-tab" role="tab" id="tt-gpo" aria-controls="term-body" aria-selected="false" tabindex="-1" data-skript="gpo">gpo</button>
+              <button class="term-tab" role="tab" id="tt-link" aria-controls="term-body" aria-selected="false" tabindex="-1" data-skript="link">firmen-link</button>
+            </div>
+          </div>
+          <div class="term-body" id="term-body" role="tabpanel" aria-labelledby="tt-intune">
+            <div class="z"><span class="t-prompt">PS&gt; </span>msiexec /i Tonfeder.msi FIRMA=tfk_halbach_K7Q2… /qn</div>
+            <div class="z t-ok">✓ installiert für alle Benutzer dieses Rechners</div>
+            <div class="z t-ok">✓ Richtlinie gesetzt: HKLM\SOFTWARE\Policies\Tonfeder</div>
+            <div class="z t-ok">✓ Gerät NB-SERVICE-11 angemeldet · Halbach Kältetechnik</div>
+            <div class="z t-info">→ Bereit. Rechte Strg halten und sprechen.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTAL -->
+  <section class="abschnitt" id="portal" aria-labelledby="h-portal" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>open portal.tonfeder.de</p>
+        <h2 id="h-portal">Ein Portal. Alles im Blick, <span class="hl">niemand überwacht.</span></h2>
+        <p class="sub">Geräte, Wörterbuch und Nutzung je Firma. Probieren Sie die Reiter aus, die Daten sind erfunden.</p>
+      </div>
+      <div class="browser reveal">
+        <div class="browser-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="url">portal.tonfeder.de/halbach</span><span class="badge" style="--c:var(--idea)">Beispieldaten</span></div>
+        <div class="portal">
+          <div class="portal-nav" role="tablist" aria-label="Bereiche im Portal" aria-orientation="vertical">
+            <div class="portal-firma">Halbach Kältetechnik<small>61 Geräte · Cloud DE</small></div>
+            <button role="tab" id="pn-0" aria-controls="pp-0" aria-selected="true">Übersicht</button>
+            <button role="tab" id="pn-1" aria-controls="pp-1" aria-selected="false" tabindex="-1">Geräte</button>
+            <button role="tab" id="pn-2" aria-controls="pp-2" aria-selected="false" tabindex="-1">Wörterbuch</button>
+          </div>
+          <div class="portal-main">
+            <div role="tabpanel" id="pp-0" aria-labelledby="pn-0">
+              <h3>Oktober 2026</h3>
+              <div class="kpis">
+                <div class="kpi"><b data-ziel="61">61</b><span>Geräte angemeldet</span></div>
+                <div class="kpi"><b data-ziel="44">44</b><span>heute aktiv</span></div>
+                <div class="kpi"><b data-ziel="2310">2.310</b><span>Minuten diktiert</span></div>
+              </div>
+              <div class="chart" role="img" aria-label="Aktive Geräte pro Tag vom 3. bis 16. Oktober: werktags zwischen 37 und 45, am Wochenende unter 5.">
+                <div class="chart-y" aria-hidden="true"><span>50</span><span>25</span><span>0</span></div>
+                <div class="chart-f" aria-hidden="true">
+                  <i style="--h:6%;--d:0"></i><i style="--h:2%;--d:1"></i><i style="--h:80%;--d:2"></i><i style="--h:84%;--d:3"></i><i style="--h:82%;--d:4"></i><i style="--h:86%;--d:5"></i><i style="--h:74%;--d:6"></i><i style="--h:8%;--d:7"></i><i style="--h:4%;--d:8"></i><i style="--h:82%;--d:9"></i><i style="--h:86%;--d:10"></i><i style="--h:88%;--d:11"></i><i style="--h:90%;--d:12"></i><i class="heute" style="--h:88%;--d:13"></i>
+                </div>
+                <div class="chart-x" aria-hidden="true"><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span></div>
+              </div>
+              <p class="notiz">Aktive Geräte pro Tag. Ausgewertet je Firma und erst ab fünf Geräten.</p>
+            </div>
+            <div role="tabpanel" id="pp-1" aria-labelledby="pn-1" hidden>
+              <h3>Geräte</h3>
+              <div class="tabelle">
+                <table>
+                  <thead><tr><th>Gerät</th><th>System</th><th>Version</th><th>Zuletzt gesehen</th><th class="rechts">Zugang</th></tr></thead>
+                  <tbody>
+                    <tr><td class="mono">NB-VERTRIEB-04</td><td>Windows 11</td><td class="mono">1.4.2</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>heute</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                    <tr><td class="mono">NB-SERVICE-11</td><td>Windows 11</td><td class="mono">1.4.2</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>heute</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                    <tr><td class="mono">TS-CITRIX-02</td><td>Terminalserver</td><td class="mono">1.4.2</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>heute</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                    <tr><td class="mono">MBP-GF-01</td><td>macOS 15</td><td class="mono">1.4.1</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>gestern</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                    <tr><td class="mono">NB-LAGER-07</td><td>Windows 10</td><td class="mono">1.3.9</td><td><span class="badge" style="--c:var(--progress)">◐ Update offen</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div role="tabpanel" id="pp-2" aria-labelledby="pn-2" hidden>
+              <h3>Wörterbuch</h3>
+              <div class="tabelle">
+                <table>
+                  <thead><tr><th>Begriff</th><th>Gilt für</th><th>Status</th><th class="rechts">Aktion</th></tr></thead>
+                  <tbody>
+                    <tr><td><b>FrostLine 300</b></td><td>ganze Firma</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>aktiv</span></td><td class="rechts"><button class="mini" type="button">Bearbeiten</button></td></tr>
+                    <tr><td><b>Frau Jäschke</b></td><td>ganze Firma</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>aktiv</span></td><td class="rechts"><button class="mini" type="button">Bearbeiten</button></td></tr>
+                    <tr><td><b>Kälteanlage Nord</b></td><td>Vorschlag von NB-SERVICE-11</td><td><span class="badge" style="--c:var(--progress)">◐ wartet</span></td><td class="rechts"><button class="mini primaer freigeben" type="button">Für alle freigeben</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BILDBAND WÖRTERBUCH -->
+  <section class="band" data-band aria-roledescription="Karussell" aria-label="Fachbegriffe">
+    <div class="band-flaeche">
+      <figure class="band-slide an" aria-roledescription="Folie" aria-label="1 von 2">
+        <img src="img/waermepumpe.webp" alt="Außeneinheit einer Wärmepumpe vor einem Backsteinhaus im Garten." width="1800" height="1000" loading="lazy" decoding="async">
+        <figcaption class="band-text"><div class="wrap"><p class="kicker"><span class="cmd">$ tonfeder korrigiere "luft wasser wärme pumpe"</span> <span class="aus">→ Luft-Wasser-Wärmepumpe</span></p><p class="band-satz">Fachbegriffe sitzen <span class="hl">beim ersten Mal.</span></p></div></figcaption>
+      </figure>
+      <figure class="band-slide" aria-roledescription="Folie" aria-label="2 von 2" aria-hidden="true">
+        <img src="img/lager-gang.webp" alt="Langer Gang zwischen hohen Regalen in einem Lager, schwarz-weiß." width="1800" height="1000" loading="lazy" decoding="async">
+        <figcaption class="band-text"><div class="wrap"><p class="kicker"><span class="cmd">$ tonfeder korrigiere "euro palette"</span> <span class="aus">→ Europalette</span></p><p class="band-satz">Ihre Wörter. <span class="hl">Ihre Schreibweise.</span></p></div></figcaption>
+      </figure>
+    </div>
+    <div class="band-steuer wrap">
+      <span class="band-zahl" aria-hidden="true"><b>01</b> / 02</span>
+      <button type="button" class="band-btn" data-schritt="-1" aria-label="Vorheriges Bild">←</button>
+      <button type="button" class="band-btn" data-schritt="1" aria-label="Nächstes Bild">→</button>
+      <button type="button" class="band-btn band-pause" aria-label="Automatischen Wechsel anhalten">❚❚</button>
+    </div>
+    <div class="band-lauf" aria-hidden="true"><i></i></div>
+  </section>
+
+  <!-- WÖRTERBUCH -->
+  <section class="abschnitt" id="woerterbuch" aria-labelledby="h-wb">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder wörterbuch --test</p>
+        <h2 id="h-wb">Probieren Sie <span class="hl">die Korrektur</span> aus.</h2>
+        <p class="sub">Die Erkennung hört „frost lein“, Ihr Produkt heißt „FrostLine“. Tonfeder vergleicht, wie Wörter klingen, und korrigiert nach jeder Erkennung.</p>
+      </div>
+      <div class="wb">
+        <div class="wb-links reveal">
+          <div class="feld">
+            <label for="wb-in">Was die Erkennung verstanden hat</label>
+            <input class="gross" id="wb-in" type="text" value="frost lein dreihundert" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="chips" aria-label="Beispiele">
+            <button class="chip-btn" type="button">frost lein dreihundert</button>
+            <button class="chip-btn" type="button">frau jeschke ruft zurück</button>
+            <button class="chip-btn" type="button">filter trockner getauscht</button>
+            <button class="chip-btn" type="button">fau de i zwanzig fünfunddreißig</button>
+            <button class="chip-btn" type="button">neue luft wasser wärme pumpe</button>
+          </div>
+          <div class="feld">
+            <label for="wb-neu">Eigenen Begriff ergänzen <small>(nur in diesem Browser)</small></label>
+            <div class="reihe-add"><input id="wb-neu" type="text" placeholder="z. B. Ihren Firmennamen" autocomplete="off"><button class="btn btn-ghost" id="wb-add" type="button">Hinzufügen</button></div>
+          </div>
+          <ul class="begriffe" id="wb-liste" aria-label="Aktive Begriffe"></ul>
+        </div>
+        <div class="ausgabe reveal" aria-live="polite">
+          <div class="ausgabe-log" id="wb-log"><div class="z t-dim">Tippen Sie links etwas ein.</div></div>
+          <div class="ergebnis"><span class="ergebnis-label">Eingefügt wird</span><span id="wb-out">FrostLine 300</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREISE -->
+  <section class="abschnitt" id="preise" aria-labelledby="h-preise" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder preis --personen <span id="kicker-n">40</span></p>
+        <h2 id="h-preise">Ab 1,50 € pro Person. <span class="hl">Auf der Website.</span></h2>
+        <p class="sub">Pro Person und Monat, monatlich kündbar. Der Pilot ist 30 Tage kostenlos.</p>
+      </div>
+      <div class="rechner reveal">
+        <div class="regler-zeile">
+          <label for="personen">Wie viele Personen diktieren?</label>
+          <output class="regler-zahl" id="personen-zahl" for="personen">40</output>
+          <input id="personen" type="range" min="5" max="500" step="5" value="40">
+        </div>
+        <div class="plaene">
+          <article class="plan" id="plan-team">
+            <div class="plan-kopf"><span class="plan-name">Team</span><span class="plan-preis">1,50 € / Person</span></div>
+            <div class="plan-summe"><b id="sum-team">60,00 €</b><span id="sum-team-txt">pro Monat für 40 Personen</span></div>
+            <ul><li>Cloud Deutschland</li><li>Firmenwörterbuch</li><li>Admin-Portal</li><li>Installation per Firmen-Link</li></ul>
+            <a class="btn btn-ghost" href="#pilot">Pilot starten</a>
+          </article>
+          <article class="plan empfohlen" id="plan-business">
+            <div class="plan-kopf"><span class="plan-name">Business</span><span class="plan-preis">2,50 € / Person</span></div>
+            <div class="plan-summe"><b id="sum-business">100,00 €</b><span id="sum-business-txt">pro Monat für 40 Personen</span></div>
+            <ul><li>Alles aus Team</li><li>MSI für Intune und GPO</li><li>Terminalserver und Citrix</li><li>Branchenpakete, Testgruppen</li></ul>
+            <a class="btn btn-accent" href="#pilot">Pilot starten</a>
+          </article>
+          <article class="plan aus" id="plan-onprem">
+            <div class="plan-kopf"><span class="plan-name">On-Premise</span><span class="plan-preis">3,00 € / Person</span></div>
+            <div class="plan-summe"><b id="sum-onprem">ab 50</b><span id="sum-onprem-txt">Personen verfügbar</span></div>
+            <ul><li>Ihr Rechenzentrum oder Tonfeder Box</li><li>Kein Ton ins Internet</li><li>Box oder Server nach Angebot</li></ul>
+            <a class="btn btn-ghost" href="#pilot">Angebot anfragen</a>
+          </article>
+        </div>
+        <p class="preis-fuss">Alle Preise netto zzgl. MwSt. Beispielrechnung, Stand Planung.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABLAUF -->
+  <section class="abschnitt" id="start" aria-labelledby="h-start" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder pilot --start</p>
+        <h2 id="h-start">Vom ersten Gespräch zum Pilot <span class="hl">in drei Tagen.</span></h2>
+      </div>
+      <ol class="ablauf reveal">
+        <li><span class="wann">Tag 1</span><h3>Gespräch</h3><p>30 Minuten zu Teamgröße, Datenstandort und den Fragen Ihres Datenschutzes.</p></li>
+        <li><span class="wann">Tag 2</span><h3>Einrichtung</h3><p>Wir legen Ihre Firma an, Sie unterschreiben den Vertrag zur Auftragsverarbeitung.</p></li>
+        <li><span class="wann">Tag 3</span><h3>Verteilung</h3><p>Ihre IT verteilt das MSI oder schickt den Firmen-Link an das Pilotteam.</p></li>
+        <li><span class="wann">Woche 4</span><h3>Entscheidung</h3><p>Im Portal sehen Sie, wie viele wirklich diktieren. Dann entscheiden Sie.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="abschnitt" id="fragen" aria-labelledby="h-faq" style="padding-top:0">
+    <div class="wrap faq">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>man tonfeder</p>
+        <h2 id="h-faq">Was IT und Datenschutz meistens fragen.</h2>
+      </div>
+      <div class="faq-liste reveal">
+        <details open><summary>Brauchen die Mitarbeitenden ein Konto?</summary><p>Nein. Das Gerät meldet sich mit dem Firmenschlüssel an. Es gibt keine Passwörter und nichts einzustellen.</p></details>
+        <details><summary>Läuft Tonfeder in Citrix und auf Terminalservern?</summary><p>Ja. Die App läuft entweder auf dem Client und schreibt in die Remote-Sitzung, oder sie läuft im Terminalserver und nutzt die Audio-Umleitung.</p></details>
+        <details><summary>Was passiert ohne Internet?</summary><p>Mit Cloud DE braucht jedes Diktat eine Verbindung. Mit Tonfeder Box oder im eigenen Rechenzentrum reicht Ihr Firmennetz.</p></details>
+        <details><summary>Was sagt der Betriebsrat?</summary><p>Sprechen Sie ihn früh an. Tonfeder zeigt keine Zahlen pro Person, und Sie bekommen eine Betriebsrats-Info und eine Mustervereinbarung.</p></details>
+        <details><summary>Wie lang darf ein Diktat sein?</summary><p>Bis 15 Minuten am Stück. Die Anzeige warnt eine Minute vor dem Ende.</p></details>
+        <details><summary>Gibt es Tonfeder für das Smartphone?</summary><p>Zuerst kommen Windows und macOS. Apps für Android und iOS sind geplant.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- BILDBAND PILOT -->
+  <section class="band" data-band aria-label="Pilot">
+    <div class="band-flaeche">
+      <figure class="band-slide an">
+        <img src="img/team.webp" alt="Vier Kolleginnen und Kollegen besprechen sich an einem Laptop in einem modernen Büro." width="2000" height="1100" loading="lazy" decoding="async">
+        <figcaption class="band-text"><div class="wrap"><p class="kicker"><span class="cmd">$ tonfeder pilot --tage 30</span> <span class="aus">→ 0,00 € · danach ab 1,50 € pro Person</span></p><p class="band-satz">Erst testen. <span class="hl">Dann entscheiden.</span></p></div></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- PILOT -->
+  <section class="abschnitt pilot" id="pilot" aria-labelledby="h-pilot">
+    <div class="hero-bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div></div>
+    <div class="wrap pilot-in">
+      <div class="reveal">
+        <div class="kopfzeile">
+          <p class="kicker"><span aria-hidden="true">$ </span>tonfeder pilot --anfragen</p>
+          <h2 id="h-pilot">Testen Sie Tonfeder <span class="hl">30 Tage</span> mit Ihrem Team.</h2>
+          <p class="sub">Kostenlos und ohne Verpflichtung. Danach entscheiden Sie anhand echter Nutzungszahlen.</p>
+        </div>
+        <ol class="danach">
+          <li>Wir melden uns innerhalb eines Werktags persönlich.</li>
+          <li>Sie bekommen Vertrag, TOM und die Vorlage für die Folgenabschätzung.</li>
+          <li>Ihre IT bekommt den Firmenschlüssel und das MSI.</li>
+        </ol>
+        <p class="kontakt">Lieber direkt? <b>pilot@tonfeder.example</b></p>
+      </div>
+      <form class="formular reveal" id="anfrage" method="post" action="/api/leads" novalidate>
+        <div class="reihe">
+          <div class="feld"><label for="f-firma">Firma</label><input id="f-firma" name="firma" autocomplete="organization" aria-describedby="e-firma"><span class="fehler-text" id="e-firma"></span></div>
+          <div class="feld"><label for="f-name">Ihr Name</label><input id="f-name" name="name" autocomplete="name" aria-describedby="e-name"><span class="fehler-text" id="e-name"></span></div>
+        </div>
+        <div class="reihe">
+          <div class="feld"><label for="f-mail">E-Mail <small>(dienstlich)</small></label><input id="f-mail" name="email" type="email" autocomplete="email" aria-describedby="e-mail"><span class="fehler-text" id="e-mail"></span></div>
+          <div class="feld"><label for="f-tel">Telefon <small>(optional)</small></label><input id="f-tel" name="telefon" type="tel" autocomplete="tel"></div>
+        </div>
+        <div class="reihe">
+          <div class="feld"><label for="f-groesse">Wie viele Personen?</label><select id="f-groesse" name="groesse"><option>5 bis 25</option><option>25 bis 100</option><option>100 bis 500</option><option>über 500</option></select></div>
+          <div class="feld"><label for="f-ort">Datenstandort</label><select id="f-ort" name="ort"><option>Noch offen</option><option>Cloud DE</option><option>Ihr Rechenzentrum</option><option>Tonfeder Box</option></select></div>
+        </div>
+        <div class="feld"><label for="f-text">Nachricht <small>(optional)</small></label><textarea id="f-text" name="nachricht" placeholder="Zum Beispiel: 40 Personen im Außendienst, Citrix im Büro"></textarea></div>
+        <div class="honig" aria-hidden="true"><label for="f-web">Website</label><input id="f-web" name="website" tabindex="-1" autocomplete="off"></div>
+        <label class="einw" for="f-einw"><input id="f-einw" name="einwilligung" type="checkbox" aria-describedby="e-einw"><span>Ich bin einverstanden, dass meine Angaben gespeichert werden, um die Anfrage zu bearbeiten. Gelöscht wird nach spätestens 180 Tagen.</span></label>
+        <span class="fehler-text" id="e-einw"></span>
+        <button class="btn btn-accent" type="submit">Pilot anfragen <span class="pfeil" aria-hidden="true">→</span></button>
+        <p class="meldung" id="f-meldung" role="status"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="fuss">
+  <div class="wrap fuss-in">
+    <a class="marke" href="#top" aria-label="Tonfeder, zum Seitenanfang"><svg aria-hidden="true"><use href="#logo"/></svg></a>
+    <nav aria-label="Rechtliches"><span>Impressum (folgt)</span><span>Datenschutz (folgt)</span><a href="#fragen">Fragen</a></nav>
+    <span class="mono">ohne Tracking · Fotos: Unsplash · Designentwurf, Oktober 2026</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var ruhig = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var beiSicht = function (el, cb, schwelle) {
+    if (!el) return;
+    if (!('IntersectionObserver' in window)) { cb(true, null); return; }
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { cb(e.isIntersecting, io); }); }, { threshold: schwelle == null ? 0.35 : schwelle });
+    io.observe(el);
+  };
+  var komma = function (ms) { return (ms / 1000).toFixed(1).replace('.', ',') + ' s'; };
+  var istFeld = function (e) { return /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName); };
+  var pille = function (el) {
+    return function (z, text, zeit) {
+      el.setAttribute('data-z', z);
+      el.querySelector('.pill-text').textContent = text;
+      el.querySelector('.pill-zeit').textContent = zeit || '';
+    };
+  };
+
+  // ---------- Mobiles Menü ----------
+  var burger = $('.burger'), mnav = $('#mnav');
+  if (burger && mnav) {
+    var menu = function (auf) { mnav.hidden = !auf; burger.setAttribute('aria-expanded', auf ? 'true' : 'false'); burger.querySelector('.sr').textContent = auf ? 'Menü schließen' : 'Menü öffnen'; };
+    burger.addEventListener('click', function () { menu(mnav.hidden); });
+    $$('a', mnav).forEach(function (a) { a.addEventListener('click', function () { menu(false); }); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !mnav.hidden) { menu(false); burger.focus(); } });
+  }
+
+  // ---------- Spotlight ----------
+  $$('.spot').forEach(function (el) {
+    el.addEventListener('pointermove', function (e) {
+      var r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  // ---------- Hero-Demo ----------
+  (function () {
+    var demo = $('#demo'); if (!demo) return;
+    var text = $('#demo-text'), knopf = $('#hold'), hinweis = $('#hold-hint'), neu = $('#demo-neu');
+    var setze = pille($('#demo-pill'));
+    var canvas = $('.wave', demo), ctx = canvas.getContext('2d');
+    var saetze = [
+      'die Messwerte der Lüftungsanlage in Halle 3 liegen vor. Alle Werte liegen im Rahmen der DIN EN 16798.',
+      'Das vollständige Protokoll schicke ich Ihnen bis Mittwoch, 12 Uhr.',
+      'Bei Fragen erreichen Sie mich jederzeit unter der bekannten Nummer.'
+    ];
+    var idx = 1, zustand = 'bereit', t0 = 0, uhr = 0, auto = !ruhig;
+    var caret = $('.caret', text);
+    var hinweisSetzen = function () {
+      hinweis.textContent = idx < saetze.length ? 'Satz ' + (idx + 1) + ' von ' + saetze.length + ' · Maus, Finger, Leertaste oder rechte Strg-Taste' : 'E-Mail fertig diktiert.';
+    };
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var welle = { an: false, werte: [], aktuell: 0, ziel: 0, silbe: 0, raf: 0, letzt: 0 };
+    for (var i = 0; i < 56; i++) welle.werte.push(0.05);
+    var zeichne = function () {
+      var w = canvas.width, h = canvas.height, n = welle.werte.length;
+      ctx.clearRect(0, 0, w, h);
+      var luecke = 3 * dpr, bw = Math.max(2 * dpr, (w - luecke * (n - 1)) / n);
+      for (var k = 0; k < n; k++) {
+        var v = welle.werte[k], bh = Math.max(2 * dpr, v * h * 0.94);
+        ctx.fillStyle = welle.an ? 'rgba(163,230,53,' + (0.3 + 0.7 * (k / n)).toFixed(3) + ')' : 'rgba(168,188,171,0.32)';
+        ctx.fillRect(Math.round(k * (bw + luecke)), Math.round((h - bh) / 2), Math.max(1, Math.round(bw)), Math.round(bh));
+      }
+    };
+    var groesse = function () {
+      var r = canvas.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.round(r.width * dpr));
+      canvas.height = Math.max(1, Math.round(r.height * dpr));
+      zeichne();
+    };
+    var schritt = function (t) {
+      welle.raf = 0;
+      if (t - welle.letzt >= 34) {
+        welle.letzt = t;
+        var v;
+        if (welle.an) {
+          welle.silbe -= 1;
+          if (welle.silbe <= 0) { welle.ziel = Math.random() < 0.18 ? 0.06 : 0.35 + Math.random() * 0.6; welle.silbe = 3 + Math.floor(Math.random() * 6); }
+          welle.aktuell += (welle.ziel - welle.aktuell) * 0.4;
+          v = Math.min(1, Math.max(0.05, welle.aktuell * (0.7 + Math.random() * 0.6)));
+        } else { welle.aktuell *= 0.8; v = Math.max(0.05, welle.aktuell); }
+        welle.werte.push(v); welle.werte.shift();
+        zeichne();
+      }
+      var ruhe = !welle.an && welle.werte.every(function (x) { return x <= 0.06; });
+      if (!ruhe) welle.raf = requestAnimationFrame(schritt); else zeichne();
+    };
+    var welleLos = function () { if (!welle.raf) welle.raf = requestAnimationFrame(schritt); };
+    if ('ResizeObserver' in window) new ResizeObserver(groesse).observe(canvas); else window.addEventListener('resize', groesse);
+    groesse();
+
+    var start = function () {
+      if (zustand !== 'bereit' || idx >= saetze.length) return;
+      zustand = 'hoert'; t0 = performance.now();
+      knopf.classList.add('an'); knopf.classList.remove('lockt'); knopf.setAttribute('aria-pressed', 'true');
+      setze('hoert', 'Hört zu', '0,0 s');
+      uhr = setInterval(function () { $('#demo-pill .pill-zeit').textContent = komma(performance.now() - t0); }, 100);
+      welle.an = true; welleLos();
+    };
+    var stopp = function () {
+      if (zustand !== 'hoert') return;
+      var dauer = performance.now() - t0;
+      clearInterval(uhr);
+      knopf.classList.remove('an'); knopf.setAttribute('aria-pressed', 'false');
+      welle.an = false; welleLos();
+      if (dauer < 400) { zustand = 'bereit'; setze('bereit', 'Etwas länger halten', ''); return; }
+      zustand = 'sendet'; setze('schreibt', 'Schreibt …', '');
+      var t1 = performance.now();
+      setTimeout(function () {
+        var p = document.createElement('p'), s = document.createElement('span');
+        s.className = 'frisch'; s.textContent = saetze[idx];
+        p.appendChild(s); p.appendChild(caret); text.appendChild(p);
+        idx++;
+        setze('fertig', 'Eingefügt', komma(performance.now() - t1));
+        zustand = idx >= saetze.length ? 'aus' : 'bereit';
+        if (zustand === 'aus') neu.hidden = false;
+        hinweisSetzen();
+      }, 700);
+    };
+    var nutzer = function () { auto = false; };
+    knopf.addEventListener('pointerdown', function (e) {
+      e.preventDefault(); nutzer();
+      if (knopf.setPointerCapture) { try { knopf.setPointerCapture(e.pointerId); } catch (err) {} }
+      start();
+    });
+    knopf.addEventListener('pointerup', stopp);
+    knopf.addEventListener('pointercancel', stopp);
+    knopf.addEventListener('lostpointercapture', stopp);
+    knopf.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    knopf.addEventListener('click', function (e) { e.preventDefault(); });
+    knopf.addEventListener('keydown', function (e) {
+      if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); nutzer(); start(); }
+      else if (e.key === ' ' || e.key === 'Enter') e.preventDefault();
+    });
+    knopf.addEventListener('keyup', function (e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); stopp(); } });
+    document.addEventListener('keydown', function (e) { if (e.code === 'ControlRight' && !e.repeat && !istFeld(e)) { nutzer(); start(); } });
+    document.addEventListener('keyup', function (e) { if (e.code === 'ControlRight') stopp(); });
+    window.addEventListener('blur', stopp);
+    neu.addEventListener('click', function () {
+      $$('p', text).slice(1).forEach(function (p) { p.remove(); });
+      text.firstElementChild.appendChild(caret);
+      idx = 0; zustand = 'bereit'; neu.hidden = true;
+      setze('bereit', 'Bereit', ''); hinweisSetzen(); knopf.focus();
+    });
+    if (auto) {
+      var vorab = $('.vorab', text); if (vorab) vorab.remove();
+      text.firstElementChild.appendChild(caret);
+      idx = 0; setze('bereit', 'Bereit', ''); hinweisSetzen();
+      beiSicht(demo, function (ja, io) {
+        if (!ja) return;
+        if (io) io.disconnect();
+        setTimeout(function () {
+          if (!auto) return;
+          start();
+          setTimeout(function () {
+            if (zustand === 'hoert') stopp();
+            setTimeout(function () { if (idx < saetze.length) { knopf.classList.add('lockt'); hinweis.textContent = 'Jetzt Sie: ' + hinweis.textContent; } }, 900);
+          }, 2300);
+        }, 900);
+      }, 0.4);
+    } else hinweisSetzen();
+  })();
+
+  // ---------- Einsatzbereiche ----------
+  (function () {
+    var tabs = $$('.p-tab'); if (!tabs.length) return;
+    var bilder = $$('.p-buehne img'), app = $('#p-app'), ptext = $('#p-text'), panel = $('#p-panel');
+    var setze = pille($('#p-pill'));
+    var daten = [
+      { app: 'Servicebericht · Auftrag 24-1187', text: 'Kältekreis geprüft, Drücke im Sollbereich. Verdampfer gereinigt und Filtertrockner getauscht. Nächste Wartung im März.', zeit: '1,9 s' },
+      { app: 'Prüfprotokoll · Gerät FL-300-0412', text: 'Sichtprüfung ohne Befund. Isolationswiderstand 2,1 Megaohm, Schutzleiter in Ordnung. Gerät freigegeben.', zeit: '1,6 s' },
+      { app: 'Wareneingang · Lieferschein 88231', text: 'Zwei Europaletten beschädigt angeliefert, Fotos im Anhang. Restliche Ware in Kommissionierzone B eingelagert.', zeit: '1,7 s' },
+      { app: 'CRM · Gesprächsnotiz Stadtwerke Lindenau', text: 'Gespräch mit Frau Okafor: Angebot für drei Standorte gewünscht, Entscheidung bis Ende November. Rückruf am Dienstag.', zeit: '2,2 s' },
+      { app: 'Neue E-Mail · An: Team Service', text: 'Hallo zusammen, die Schulung zur neuen Zeiterfassung ist am Donnerstag um 10 Uhr. Bitte tragt euch bis Mittwoch in die Liste ein.', zeit: '1,8 s' }
+    ];
+    var akt = 0, laeuft = !ruhig, sichtbar = false, uhren = [], weiter = 0;
+    var leeren = function () { uhren.forEach(clearTimeout); uhren = []; clearTimeout(weiter); };
+    var zeige = function (i, fokus) {
+      leeren(); akt = i;
+      tabs.forEach(function (t, k) { var an = k === i; t.setAttribute('aria-selected', an ? 'true' : 'false'); t.tabIndex = an ? 0 : -1; t.querySelector('.lauf').classList.remove('an'); });
+      if (fokus) tabs[i].focus();
+      panel.setAttribute('aria-labelledby', tabs[i].id);
+      bilder.forEach(function (b, k) { b.classList.toggle('an', k === i); });
+      app.textContent = daten[i].app;
+      if (ruhig) { ptext.textContent = daten[i].text; setze('fertig', 'Eingefügt', daten[i].zeit); }
+      else {
+        ptext.textContent = ''; setze('hoert', 'Hört zu', '');
+        uhren.push(setTimeout(function () { setze('schreibt', 'Schreibt …', ''); }, 1300));
+        uhren.push(setTimeout(function () { ptext.textContent = daten[i].text; ptext.classList.remove('frisch'); void ptext.offsetWidth; ptext.classList.add('frisch'); setze('fertig', 'Eingefügt', daten[i].zeit); }, 1800));
+      }
+      if (laeuft && sichtbar) { var l = tabs[i].querySelector('.lauf'); void l.offsetWidth; l.classList.add('an'); weiter = setTimeout(function () { zeige((akt + 1) % tabs.length); }, 7000); }
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { laeuft = false; zeige(i); });
+      t.addEventListener('keydown', function (e) {
+        var n = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+        if (n != null) { e.preventDefault(); laeuft = false; zeige(n, true); }
+      });
+    });
+    beiSicht($('.persona'), function (ja) {
+      var war = sichtbar; sichtbar = ja;
+      if (!laeuft) return;
+      if (ja && !war) { var l = tabs[akt].querySelector('.lauf'); l.classList.remove('an'); void l.offsetWidth; l.classList.add('an'); clearTimeout(weiter); weiter = setTimeout(function () { zeige((akt + 1) % tabs.length); }, 7000); }
+      if (!ja) { clearTimeout(weiter); tabs[akt].querySelector('.lauf').classList.remove('an'); }
+    }, 0.3);
+  })();
+
+  // ---------- Bildbänder (alle Instanzen) ----------
+  $$('[data-band]').forEach(function (band) {
+    var slides = $$('.band-slide', band); if (slides.length < 2) return;
+    var zahl = $('.band-zahl b', band), lauf = $('.band-lauf i', band), pause = $('.band-pause', band);
+    var akt = 0, uhr = 0, sichtbar = false, angehalten = ruhig, tipp = 0;
+    var tippe = function (slide) {
+      clearInterval(tipp);
+      var cmd = $('.cmd', slide), aus = $('.aus', slide);
+      if (!cmd) return;
+      var voll = cmd.getAttribute('data-voll') || cmd.textContent; cmd.setAttribute('data-voll', voll);
+      if (ruhig) { cmd.textContent = voll; aus.style.opacity = 1; return; }
+      cmd.textContent = '$ '; aus.style.opacity = 0;
+      var n = 2;
+      setTimeout(function () {
+        tipp = setInterval(function () {
+          n++; cmd.textContent = voll.slice(0, n);
+          if (n >= voll.length) { clearInterval(tipp); aus.style.opacity = 1; }
+        }, 26);
+      }, 550);
+    };
+    var laufNeu = function () {
+      if (!lauf) return;
+      lauf.classList.remove('an'); void lauf.offsetWidth;
+      if (!angehalten && sichtbar) lauf.classList.add('an');
+    };
+    var planen = function () {
+      clearTimeout(uhr);
+      if (!angehalten && sichtbar) uhr = setTimeout(function () { gehe(1); }, 7000);
+      laufNeu();
+    };
+    var gehe = function (richtung, ziel) {
+      var neu = ziel != null ? ziel : (akt + richtung + slides.length) % slides.length;
+      if (neu === akt) return;
+      var alt = slides[akt], rein = slides[neu], vor = richtung >= 0;
+      rein.classList.add('ohne');
+      rein.classList.toggle('links', !vor);
+      void rein.offsetWidth;
+      rein.classList.remove('ohne');
+      rein.classList.remove('links');
+      rein.classList.add('an'); rein.setAttribute('aria-hidden', 'false');
+      alt.classList.remove('an'); alt.setAttribute('aria-hidden', 'true');
+      alt.classList.toggle('links', vor);
+      akt = neu;
+      if (zahl) zahl.textContent = String(akt + 1).padStart(2, '0');
+      tippe(rein);
+      planen();
+    };
+    $$('[data-schritt]', band).forEach(function (b) { b.addEventListener('click', function () { gehe(+b.getAttribute('data-schritt')); }); });
+    if (pause) {
+      var pauseText = function () { pause.textContent = angehalten ? '▶' : '❚❚'; pause.setAttribute('aria-label', angehalten ? 'Automatischen Wechsel starten' : 'Automatischen Wechsel anhalten'); };
+      pause.addEventListener('click', function () { angehalten = !angehalten; pauseText(); planen(); });
+      pauseText();
+    }
+    beiSicht(band, function (ja) {
+      var war = sichtbar; sichtbar = ja;
+      if (ja && !war) { tippe(slides[akt]); planen(); }
+      if (!ja) { clearTimeout(uhr); if (lauf) lauf.classList.remove('an'); }
+    }, 0.35);
+  });
+
+  // ---------- Desktop-Nachbau ----------
+  (function () {
+    var desk = $('#desk'); if (!desk) return;
+    var rahmen = $('#desk-rahmen'), groesse = $('#desk-groesse');
+    var B = 1200, H = 680, s = 1;
+    var skalieren = function () {
+      var w = rahmen.clientWidth;
+      s = Math.min(1, Math.max(0.5, w / B));
+      desk.style.transform = 'scale(' + s + ')';
+      groesse.style.width = (B * s) + 'px'; groesse.style.height = (H * s) + 'px';
+    };
+    if ('ResizeObserver' in window) new ResizeObserver(skalieren).observe(rahmen); else window.addEventListener('resize', skalieren);
+    skalieren();
+
+    var pillEl = $('#desk-pill'), setze = pille(pillEl), trayBtn = $('#tray-btn'), menue = $('#tray-menue'), einst = $('#dw-einst');
+    var edText = $('#ed-text'), edCaret = $('.caret', edText), toast = $('#desk-toast'), status = $('#tm-status'), pauseBtn = $('#tm-pause');
+    var Z = {
+      bereit: ['Bereit', ''], hoert: ['Hört zu', '0:07'], sendet: ['Wird gesendet · 43 %', ''], schreibt: ['Schreibt …', ''],
+      fertig: ['Eingefügt', '1,8 s'], stumm: ['Ich höre nichts. Mikrofon prüfen', ''], zeit: ['Noch 60 Sekunden', '14:00'],
+      offline: ['Keine Verbindung. Neuer Versuch …', ''], gesperrt: ['Gerät gesperrt. Bitte an Ihre IT wenden', ''], pause: ['Pausiert bis 10:41', '']
+    };
+    var TRAY = { bereit: 'bereit', hoert: 'aktiv', sendet: 'aktiv', schreibt: 'aktiv', fertig: 'aktiv', stumm: 'warn', zeit: 'warn', offline: 'aus', pause: 'aus', gesperrt: 'gesperrt' };
+    var uhren = [], laeuft = false, si = 0, letzter = '', pausiert = false;
+    var stoppAlles = function () { uhren.forEach(clearTimeout); uhren.forEach(clearInterval); uhren = []; laeuft = false; };
+    var zustand = function (k, text, zeit) {
+      setze(k, text || Z[k][0], zeit != null ? zeit : Z[k][1]);
+      desk.setAttribute('data-tray', TRAY[k]);
+      trayBtn.setAttribute('aria-label', 'Tonfeder: ' + (text || Z[k][0]));
+      status.textContent = text || Z[k][0];
+      $$('.z-chip').forEach(function (c) { c.setAttribute('aria-pressed', c.getAttribute('data-z') === k ? 'true' : 'false'); });
+      if (k === 'sendet' && !text) pillEl.style.setProperty('--p', '0.43');
+    };
+    var melde = function (t) { toast.textContent = t; toast.hidden = false; clearTimeout(melde.u); melde.u = setTimeout(function () { toast.hidden = true; }, 2600); };
+    var zeigen = function (el) { el.classList.remove('zeig'); void el.offsetWidth; el.classList.add('zeig'); setTimeout(function () { el.classList.remove('zeig'); }, 1700); };
+    var einfuegen = function (t) {
+      var sp = document.createElement('span'); sp.className = 'frisch'; sp.textContent = ' ' + t;
+      edText.insertBefore(sp, edCaret); letzter = t;
+    };
+
+    // Menü
+    var menueAuf = function (auf) { menue.hidden = !auf; trayBtn.setAttribute('aria-expanded', auf ? 'true' : 'false'); if (auf) { var b = $('button', menue); if (b) b.focus(); } };
+    trayBtn.addEventListener('click', function (e) { e.stopPropagation(); menueAuf(menue.hidden); });
+    document.addEventListener('click', function (e) { if (!menue.hidden && !menue.contains(e.target) && e.target !== trayBtn) menueAuf(false); });
+    desk.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (!menue.hidden) { menueAuf(false); trayBtn.focus(); }
+      else if (!einst.hidden) { einst.hidden = true; trayBtn.focus(); }
+    });
+
+    // Einstellungen
+    var etabs = $$('.einst-nav [role="tab"]');
+    var etab = function (i, fokus) {
+      etabs.forEach(function (t, k) { var an = k === i; t.setAttribute('aria-selected', an ? 'true' : 'false'); t.tabIndex = an ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !an; });
+      if (fokus) etabs[i].focus();
+    };
+    etabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { etab(i); });
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); etab((i + 1) % etabs.length, true); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); etab((i - 1 + etabs.length) % etabs.length, true); }
+      });
+    });
+    var einstAuf = function (tab) { einst.hidden = false; etab(tab || 0); etabs[tab || 0].focus(); };
+    $('.dw-x', einst).addEventListener('click', function () { einst.hidden = true; trayBtn.focus(); });
+    $$('.seg-klein button', einst).forEach(function (b, i, alle) { b.addEventListener('click', function () { alle.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); }); });
+    $('.schalter', einst).addEventListener('click', function () { var b = this; b.setAttribute('aria-checked', b.getAttribute('aria-checked') === 'true' ? 'false' : 'true'); });
+    var vorschlag = function (b) { b.addEventListener('click', function () { b.textContent = '◐ vorgeschlagen'; b.disabled = true; }); };
+    $$('#e-liste button').forEach(vorschlag);
+    $('#e-add').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var inp = $('#e-neu'), w = inp.value.trim(); if (!w) return;
+      var li = document.createElement('li'), sp = document.createElement('span'), b = document.createElement('button');
+      sp.textContent = w; b.type = 'button'; b.textContent = 'für alle vorschlagen'; vorschlag(b);
+      li.appendChild(sp); li.appendChild(b); $('#e-liste').insertBefore(li, $('#e-liste').firstChild); inp.value = '';
+    });
+
+    // Menüpunkte
+    $$('[data-aktion]', menue).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var a = b.getAttribute('data-aktion'); menueAuf(false);
+        if (a === 'erneut') { if (letzter) { einfuegen(letzter); zustand('fertig', 'Erneut eingefügt', ''); } else melde('Noch kein Diktat in dieser Sitzung.'); }
+        if (a === 'begriffe') einstAuf(1);
+        if (a === 'einstellungen') einstAuf(0);
+        if (a === 'pause') { pausiert = !pausiert; stoppAlles(); zustand(pausiert ? 'pause' : 'bereit'); pauseBtn.textContent = pausiert ? 'Fortsetzen' : 'Pause für 1 Stunde'; }
+        if (a === 'beenden') melde('Beenden ist in der Vorschau ausgeschaltet.');
+      });
+    });
+
+    // Diktat abspielen
+    var saetze = ['Verdampfer gereinigt und Filtertrockner getauscht. Drücke danach im Sollbereich.', 'Kunde wünscht ein Angebot für eine zweite Anlage in Halle 4. Rückruf am Donnerstag.', 'Nächste Wartung im März.'];
+    var abspielen = function () {
+      if (pausiert) { melde('Tonfeder ist pausiert. Über das Tray-Menü fortsetzen.'); return; }
+      stoppAlles(); laeuft = true; menueAuf(false);
+      var t = saetze[si % saetze.length]; si++;
+      if (ruhig) { einfuegen(t); zustand('fertig'); laeuft = false; return; }
+      var t0 = performance.now();
+      zustand('hoert', 'Hört zu', '0:00');
+      var tick = setInterval(function () { pillEl.querySelector('.pill-zeit').textContent = '0:0' + Math.min(9, Math.floor((performance.now() - t0) / 1000)); }, 200);
+      uhren.push(tick);
+      uhren.push(setTimeout(function () {
+        clearInterval(tick); zustand('sendet', 'Wird gesendet · 0 %', '');
+        var p = 0, f = setInterval(function () {
+          p = Math.min(100, p + 9); pillEl.style.setProperty('--p', String(p / 100));
+          pillEl.querySelector('.pill-text').textContent = 'Wird gesendet · ' + p + ' %';
+          if (p >= 100) clearInterval(f);
+        }, 60);
+        uhren.push(f);
+      }, 2600));
+      uhren.push(setTimeout(function () { zustand('schreibt'); }, 3400));
+      uhren.push(setTimeout(function () { einfuegen(t); zustand('fertig', 'Eingefügt', '1,6 s'); }, 4000));
+      uhren.push(setTimeout(function () { zustand('bereit'); laeuft = false; }, 6800));
+    };
+    $('#desk-play').addEventListener('click', abspielen);
+    $$('.z-chip').forEach(function (c) { c.addEventListener('click', function () { stoppAlles(); pausiert = false; pauseBtn.textContent = 'Pause für 1 Stunde'; zustand(c.getAttribute('data-z')); }); });
+
+    // Legende
+    $$('[data-legende]').forEach(function (b) {
+      b.addEventListener('click', function (e) {
+        e.stopPropagation(); var w = b.getAttribute('data-legende');
+        if (w === 'tray') { menueAuf(true); zeigen(trayBtn); }
+        if (w === 'pill') zeigen(pillEl);
+        if (w === 'text') { abspielen(); zeigen($('.ed-seite')); }
+        if (w === 'einst') { einstAuf(0); zeigen(einst); }
+      });
+    });
+
+    // Anzeige verschieben (Maus, Finger, Pfeiltasten)
+    var setzePos = function (x, y) {
+      x = Math.max(8, Math.min(B - pillEl.offsetWidth - 8, x));
+      y = Math.max(8, Math.min(H - 48 - pillEl.offsetHeight - 8, y));
+      pillEl.style.left = x + 'px'; pillEl.style.top = y + 'px'; pillEl.style.bottom = 'auto'; pillEl.style.transform = 'none';
+      return { x: x, y: y };
+    };
+    var speichern = function () { try { localStorage.setItem('tf-pill', JSON.stringify({ x: pillEl.offsetLeft, y: pillEl.offsetTop })); } catch (e) {} };
+    try { var gespeichert = JSON.parse(localStorage.getItem('tf-pill') || 'null'); if (gespeichert) setzePos(gespeichert.x, gespeichert.y); } catch (e) {}
+    var zieh = null;
+    pillEl.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0) return;
+      var r = pillEl.getBoundingClientRect();
+      zieh = { dx: (e.clientX - r.left) / s, dy: (e.clientY - r.top) / s };
+      try { pillEl.setPointerCapture(e.pointerId); } catch (err) {}
+      pillEl.classList.add('zieht');
+    });
+    pillEl.addEventListener('pointermove', function (e) {
+      if (!zieh) return;
+      var d = desk.getBoundingClientRect();
+      setzePos((e.clientX - d.left) / s - zieh.dx, (e.clientY - d.top) / s - zieh.dy);
+    });
+    var loslassen = function () { if (!zieh) return; zieh = null; pillEl.classList.remove('zieht'); speichern(); };
+    pillEl.addEventListener('pointerup', loslassen);
+    pillEl.addEventListener('pointercancel', loslassen);
+    pillEl.addEventListener('dblclick', function () { pillEl.style.cssText = ''; try { localStorage.removeItem('tf-pill'); } catch (e) {} });
+    pillEl.addEventListener('keydown', function (e) {
+      var d = { ArrowLeft: [-12, 0], ArrowRight: [12, 0], ArrowUp: [0, -12], ArrowDown: [0, 12] }[e.key];
+      if (!d) return;
+      e.preventDefault(); setzePos(pillEl.offsetLeft + d[0], pillEl.offsetTop + d[1]); speichern();
+    });
+
+    // Uhr
+    var uhrZeit = function () {
+      var n = new Date();
+      $('#d-zeit').textContent = n.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+      $('#d-datum').textContent = n.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    };
+    uhrZeit(); setInterval(uhrZeit, 30000);
+  })();
+
+  // ---------- Datenstandort ----------
+  (function () {
+    var svg = $('#ort-svg'); if (!svg) return;
+    var gCloud = $('#g-cloud'), gLokal = $('#g-lokal'), dot = $('#paket'), label = $('#paket-label');
+    var fakten = {
+      cloud: [['Ja, verschlüsselt nach Nürnberg', 'und nirgendwo sonst hin'], ['Nur Dauer und Anzahl', 'Ton und Text verwerfen wir nach der Rückgabe'], ['Ja, für jedes Diktat', 'rund 0,2 MB pro Minute Sprache']],
+      rz: [['Nein', 'die Erkennung läuft in Ihrem Rechenzentrum'], ['Nur Dauer und Anzahl', 'als anonyme Zähler an die Tonfeder-Cloud'], ['Nein, Ihr Netz reicht', 'Internet nur für Lizenz und Updates']],
+      box: [['Nein', 'die Box steht in Ihrem Serverschrank'], ['Nur Dauer und Anzahl', 'als anonyme Zähler an die Tonfeder-Cloud'], ['Nein, Ihr Netz reicht', 'Diktate gehen auch bei Internetausfall']]
+    };
+    var folgen = { cloud: [['c-a', 'ton'], ['c-b', 'ton'], ['c-c', 'text'], ['c-d', 'text']], lokal: [['l-a', 'ton'], ['l-b', 'text'], ['l-c', 'zaehler']] };
+    var namen = { ton: 'Ton', text: 'Text', zaehler: 'Zähler' };
+    var folge = folgen.cloud, si = 0, sStart = 0, raf = 0, sichtbar = false;
+    var dd = function (id, w) { var el = document.getElementById(id), sm = document.createElement('small'); el.textContent = w[0]; sm.textContent = w[1]; el.appendChild(sm); };
+    var tick = function (t) {
+      raf = 0;
+      if (!sStart) sStart = t;
+      var schritt = folge[si], pfad = document.getElementById(schritt[0]), art = schritt[1];
+      var dauer = art === 'zaehler' ? 1700 : 1050;
+      var p = Math.max(0, Math.min(1, (t - sStart) / dauer));
+      var e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      var pt = pfad.getPointAtLength(e * pfad.getTotalLength());
+      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); dot.setAttribute('class', 'paket ' + art);
+      label.setAttribute('x', pt.x + 9); label.setAttribute('y', pt.y - 9); label.setAttribute('class', 'paket-label ' + art); label.textContent = namen[art];
+      if (p >= 1) { si = (si + 1) % folge.length; sStart = t + (si === 0 ? 700 : 150); }
+      if (sichtbar) raf = requestAnimationFrame(tick);
+    };
+    var setzeOrt = function (o) {
+      $$('[data-ort]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-ort') === o ? 'true' : 'false'); });
+      var lokal = o !== 'cloud';
+      if (lokal) { gCloud.setAttribute('display', 'none'); gLokal.removeAttribute('display'); }
+      else { gLokal.setAttribute('display', 'none'); gCloud.removeAttribute('display'); }
+      $('#z-links').textContent = o === 'rz' ? '▣ Ihr Rechenzentrum' : '▣ Ihr Firmennetz';
+      $('#z-links-sub').textContent = o === 'rz' ? 'Firmennetz und eigene Server' : (o === 'box' ? 'Büro, Werkstatt, Serverschrank' : 'Büro, Werkstatt, Homeoffice');
+      $('#z-rechts').textContent = lokal ? '▣ Tonfeder-Cloud' : '▣ Rechenzentrum Deutschland';
+      $('#z-rechts-sub').textContent = lokal ? 'nur Verwaltung, kein Ton' : 'Nürnberg · docker compose';
+      $('#lokal-titel').textContent = o === 'box' ? 'Tonfeder Box' : 'Tonfeder-Server';
+      $('#lokal-sub').textContent = o === 'box' ? 'Erkennung im Serverschrank' : '+ Erkennung · Container';
+      dd('f-ton', fakten[o][0]); dd('f-speicher', fakten[o][1]); dd('f-netz', fakten[o][2]);
+      folge = lokal ? folgen.lokal : folgen.cloud; si = 0; sStart = 0;
+    };
+    $$('[data-ort]').forEach(function (b) { b.addEventListener('click', function () { setzeOrt(b.getAttribute('data-ort')); }); });
+    if (!ruhig) beiSicht(svg, function (ja) { sichtbar = ja; if (ja && !raf) { sStart = 0; raf = requestAnimationFrame(tick); } }, 0.2);
+  })();
+
+  // ---------- Terminal ----------
+  (function () {
+    var body = $('#term-body'); if (!body) return;
+    var tabs = $$('.term-tab');
+    var skripte = {
+      intune: [['cmd', 'PS> ', 'msiexec /i Tonfeder.msi FIRMA=tfk_halbach_K7Q2… /qn'], ['t-ok', '✓ installiert für alle Benutzer dieses Rechners'], ['t-ok', '✓ Richtlinie gesetzt: HKLM\\SOFTWARE\\Policies\\Tonfeder'], ['t-ok', '✓ Gerät NB-SERVICE-11 angemeldet · Halbach Kältetechnik'], ['t-info', '→ Bereit. Rechte Strg halten und sprechen.']],
+      gpo: [['cmd', 'PS> ', 'New-GPO -Name "Tonfeder" | New-GPLink -Target "OU=Service,DC=halbach,DC=local"'], ['cmd', 'PS> ', 'Set-GPRegistryValue -Name "Tonfeder" -Key "HKLM\\SOFTWARE\\Policies\\Tonfeder" -ValueName EnrollKey -Type String -Value "tfk_halbach_K7Q2…"'], ['t-ok', '✓ Gruppenrichtlinie verknüpft mit OU Service'], ['t-dim', '  61 Rechner übernehmen sie beim nächsten Neustart'], ['t-info', '→ Kein Besuch am Arbeitsplatz nötig.']],
+      link: [['cmd', '$ ', 'open https://get.tonfeder.de/halbach'], ['t-dim', '↓ Tonfeder-Setup_halbach.exe · signiert · ohne Adminrechte'], ['t-ok', '✓ installiert in %LOCALAPPDATA%\\Tonfeder'], ['t-ok', '✓ mit Halbach Kältetechnik verbunden'], ['t-info', '→ Kein Konto, kein Passwort, keine Einstellungen.']]
+    };
+    var lauf = 0;
+    var warte = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+    var zeile = function (z) {
+      var d = document.createElement('div'); d.className = 'z';
+      if (z[0] === 'cmd') { var p = document.createElement('span'); p.className = 't-prompt'; p.textContent = z[1]; d.appendChild(p); d.appendChild(document.createTextNode(z[2])); }
+      else { d.className += ' ' + z[0]; d.textContent = z[1]; }
+      return d;
+    };
+    var spiele = function (key) {
+      var meinLauf = ++lauf;
+      body.textContent = '';
+      if (ruhig) { skripte[key].forEach(function (z) { body.appendChild(zeile(z)); }); return; }
+      (async function () {
+        for (var n = 0; n < skripte[key].length; n++) {
+          var z = skripte[key][n];
+          if (meinLauf !== lauf) return;
+          if (z[0] === 'cmd') {
+            var d = document.createElement('div'); d.className = 'z';
+            var p = document.createElement('span'); p.className = 't-prompt'; p.textContent = z[1];
+            var t = document.createTextNode(''), c = document.createElement('span'); c.className = 'caret';
+            d.appendChild(p); d.appendChild(t); d.appendChild(c); body.appendChild(d);
+            for (var k = 1; k <= z[2].length; k++) { if (meinLauf !== lauf) return; t.textContent = z[2].slice(0, k); await warte(z[2].length > 60 ? 9 : 22); }
+            await warte(280); c.remove();
+          } else { await warte(320); if (meinLauf !== lauf) return; body.appendChild(zeile(z)); }
+        }
+      })();
+    };
+    var waehle = function (tab, fokus) {
+      tabs.forEach(function (t) { var an = t === tab; t.setAttribute('aria-selected', an ? 'true' : 'false'); t.tabIndex = an ? 0 : -1; });
+      body.setAttribute('aria-labelledby', tab.id);
+      if (fokus) tab.focus();
+      spiele(tab.getAttribute('data-skript'));
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { waehle(t); });
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); waehle(tabs[(i + 1) % tabs.length], true); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); waehle(tabs[(i - 1 + tabs.length) % tabs.length], true); }
+      });
+    });
+    if (!ruhig) beiSicht(body, function (ja, io) { if (ja) { if (io) io.disconnect(); spiele('intune'); } }, 0.5);
+  })();
+
+  // ---------- Portal ----------
+  (function () {
+    var tabs = $$('.portal-nav [role="tab"]'); if (!tabs.length) return;
+    var waehle = function (tab, fokus) {
+      tabs.forEach(function (t) { var an = t === tab; t.setAttribute('aria-selected', an ? 'true' : 'false'); t.tabIndex = an ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !an; });
+      if (fokus) tab.focus();
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { waehle(t); });
+      t.addEventListener('keydown', function (e) {
+        var n = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+        if (n != null) { e.preventDefault(); waehle(tabs[n], true); }
+      });
+    });
+    $$('.sperren').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var zelle = b.closest('tr').children[3], badge = zelle.querySelector('.badge');
+        if (b.textContent === 'Sperren') { b.dataset.alt = badge.outerHTML; badge.style.setProperty('--c', 'var(--danger)'); badge.textContent = '✕ gesperrt'; b.textContent = 'Entsperren'; }
+        else { zelle.innerHTML = b.dataset.alt; b.textContent = 'Sperren'; }
+      });
+    });
+    $$('.freigeben').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var tr = b.closest('tr'); tr.children[1].textContent = 'ganze Firma';
+        var badge = tr.querySelector('.badge'); badge.style.removeProperty('--c'); badge.textContent = '✓ aktiv';
+        b.className = 'mini'; b.textContent = 'Bearbeiten';
+      });
+    });
+    if (!ruhig) beiSicht($('.portal'), function (ja, io) {
+      if (!ja) return; if (io) io.disconnect();
+      $('.chart-f').classList.add('wachsen');
+      $$('.kpi b[data-ziel]').forEach(function (el) {
+        var ziel = +el.getAttribute('data-ziel'), t0 = performance.now();
+        requestAnimationFrame(function zaehlen(t) {
+          var p = Math.min(1, (t - t0) / 1200);
+          el.textContent = Math.round(ziel * (1 - Math.pow(1 - p, 3))).toLocaleString('de-DE');
+          if (p < 1) requestAnimationFrame(zaehlen);
+        });
+      });
+    }, 0.35);
+  })();
+
+  // ---------- Wörterbuch (Kölner Phonetik) ----------
+  (function () {
+    var ein = $('#wb-in'); if (!ein) return;
+    var log = $('#wb-log'), out = $('#wb-out'), liste = $('#wb-liste'), neu = $('#wb-neu');
+    var begriffe = [
+      { w: 'FrostLine 300', q: 'Firma' }, { w: 'Frau Jäschke', q: 'Firma' }, { w: 'Halbach', q: 'Firma' },
+      { w: 'Filtertrockner', q: 'Paket' }, { w: 'Luft-Wasser-Wärmepumpe', q: 'Paket' }, { w: 'Europalette', q: 'Paket' }, { w: 'Kommissionierzone', q: 'Paket' }
+    ];
+    var zuordnungen = [{ s: 'fau de i zwanzig fünfunddreißig', w: 'VDI 2035' }, { s: 'r zwei neunzig', w: 'R-290' }];
+    var stopp = ['der', 'die', 'das', 'und', 'ist', 'im', 'in', 'mit', 'nach', 'auf', 'neue', 'neuer', 'neu', 'ruft', 'zurück', 'getauscht', 'ein', 'eine'];
+    var hat = function (menge, z) { return z !== '' && menge.indexOf(z) >= 0; };
+    var hatK = function (o, k) { return Object.prototype.hasOwnProperty.call(o, k); };
+    var koelner = function (wort) {
+      var s = wort.toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 's').replace(/[^a-z]/g, '');
+      var roh = '';
+      for (var i = 0; i < s.length; i++) {
+        var c = s[i], vor = i > 0 ? s[i - 1] : '', nach = i < s.length - 1 ? s[i + 1] : '', k = '';
+        if ('aeijouy'.indexOf(c) >= 0) k = '0';
+        else if (c === 'h') k = '';
+        else if (c === 'b') k = '1';
+        else if (c === 'p') k = nach === 'h' ? '3' : '1';
+        else if (c === 'd' || c === 't') k = hat('csz', nach) ? '8' : '2';
+        else if ('fvw'.indexOf(c) >= 0) k = '3';
+        else if ('gkq'.indexOf(c) >= 0) k = '4';
+        else if (c === 'c') { if (i === 0) k = hat('ahkloqrux', nach) ? '4' : '8'; else k = hat('sz', vor) ? '8' : (hat('ahkoqux', nach) ? '4' : '8'); }
+        else if (c === 'x') k = hat('ckq', vor) ? '8' : '48';
+        else if (c === 'l') k = '5';
+        else if (c === 'm' || c === 'n') k = '6';
+        else if (c === 'r') k = '7';
+        else if (c === 's' || c === 'z') k = '8';
+        roh += k;
+      }
+      var z = '';
+      for (var j = 0; j < roh.length; j++) if (roh[j] !== z[z.length - 1]) z += roh[j];
+      return z.charAt(0) + z.slice(1).replace(/0/g, '');
+    };
+    var lev = function (a, b) {
+      var m = a.length, n = b.length, d = [];
+      for (var i = 0; i <= m; i++) d[i] = [i];
+      for (var j = 1; j <= n; j++) d[0][j] = j;
+      for (i = 1; i <= m; i++) for (j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      return d[m][n];
+    };
+    var norm = function (s) { return s.toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 's').replace(/[^a-z0-9]/g, ''); };
+    var EINER = { null: 0, eins: 1, zwei: 2, drei: 3, vier: 4, 'fünf': 5, sechs: 6, sieben: 7, acht: 8, neun: 9 };
+    var TEENS = { zehn: 10, elf: 11, 'zwölf': 12, dreizehn: 13, vierzehn: 14, 'fünfzehn': 15, sechzehn: 16, siebzehn: 17, achtzehn: 18, neunzehn: 19 };
+    var ZEHNER = { zwanzig: 20, 'dreißig': 30, vierzig: 40, 'fünfzig': 50, sechzig: 60, siebzig: 70, achtzig: 80, neunzig: 90 };
+    var einer = function (s) { return s === 'ein' ? 1 : (hatK(EINER, s) ? EINER[s] : null); };
+    var unter100 = function (s) {
+      if (hatK(EINER, s)) return EINER[s]; if (hatK(TEENS, s)) return TEENS[s]; if (hatK(ZEHNER, s)) return ZEHNER[s];
+      var u = s.indexOf('und');
+      if (u > 0) { var e = einer(s.slice(0, u)), z = s.slice(u + 3); if (e && hatK(ZEHNER, z)) return ZEHNER[z] + e; }
+      return null;
+    };
+    var unter1000 = function (s) {
+      var h = s.indexOf('hundert');
+      if (h >= 0) { var v = s.slice(0, h), f = v === '' ? 1 : einer(v); if (!f) return null; var r = s.slice(h + 7); if (r === '') return f * 100; var n = unter100(r); return n == null ? null : f * 100 + n; }
+      return unter100(s);
+    };
+    var zahl = function (w) {
+      if (w === 'ein' || w === 'eine' || w === '') return null;
+      var t = w.indexOf('tausend'), summe = 0, rest = w;
+      if (t >= 0) { var v = w.slice(0, t), f = v === '' ? 1 : unter1000(v); if (!f) return null; summe = f * 1000; rest = w.slice(t + 7); if (rest === '') return summe; }
+      var r = unter1000(rest); return r == null ? null : summe + r;
+    };
+    var zerlege = function (w) { var m = w.match(/^(.*?)(?:\s+(\d[\d.,-]*))?$/); return { buch: m[1], zahl: m[2] || '' }; };
+    var korrigiere = function (eingabe) {
+      var zeilen = [['cmd', '$ ', 'tonfeder korrigiere "' + eingabe + '"']];
+      var toks = eingabe.trim().split(/\s+/).filter(Boolean).map(function (t) { return { t: t, fix: false }; });
+      var anzahl = 0;
+      zuordnungen.forEach(function (z) {
+        var s = z.s.split(' ');
+        for (var i = 0; i + s.length <= toks.length; i++) {
+          var ok = true;
+          for (var k = 0; k < s.length; k++) if (toks[i + k].fix || toks[i + k].t.toLowerCase() !== s[k]) { ok = false; break; }
+          if (ok) { toks.splice(i, s.length, { t: z.w, fix: true }); anzahl++; zeilen.push(['t-info', 'zuordnung  "' + z.s + '" → ' + z.w]); }
+        }
+      });
+      toks.forEach(function (o) { if (o.fix) return; var n = zahl(o.t.toLowerCase()); if (n != null) { zeilen.push(['t-dim', 'zahl       ' + o.t + ' → ' + n]); o.t = String(n); o.zahl = true; } });
+      begriffe.forEach(function (b) {
+        var teile = zerlege(b.w), ziel = koelner(teile.buch), zn = norm(teile.buch);
+        if (ziel.length < 3 || zn.length < 5) return;
+        for (var i = 0; i < toks.length; i++) {
+          for (var n = 4; n >= 1; n--) {
+            if (i + n > toks.length) continue;
+            var fenster = toks.slice(i, i + n);
+            if (fenster.some(function (o) { return o.fix || o.zahl || stopp.indexOf(o.t.toLowerCase()) >= 0; })) continue;
+            var roh = fenster.map(function (o) { return o.t; }).join(' '), code = koelner(roh), rn = norm(roh);
+            var codeOk = code === ziel || (code.length >= 5 && ziel.length >= 5 && lev(code, ziel) <= 1);
+            var aehnl = 1 - lev(rn, zn) / Math.max(rn.length, zn.length);
+            if (!codeOk || aehnl < (ziel.length < 5 ? 0.75 : 0.6)) continue;
+            var ersetzt = teile.buch, nimm = n;
+            if (teile.zahl && toks[i + n] && toks[i + n].t === teile.zahl) { ersetzt = b.w; nimm = n + 1; }
+            if (roh === ersetzt) break;
+            zeilen.push(['t-ok', 'phonetik   "' + roh + '" ' + code + ' = ' + teile.buch + ' ' + ziel + ' · ' + Math.round(aehnl * 100) + ' % ähnlich']);
+            toks.splice(i, nimm, { t: ersetzt, fix: true }); anzahl++;
+            break;
+          }
+        }
+      });
+      zeilen.push(anzahl ? ['t-ok', 'ergebnis   ✓ ' + anzahl + (anzahl === 1 ? ' Korrektur' : ' Korrekturen')] : ['t-dim', 'ergebnis   keine Änderung nötig']);
+      return { toks: toks, zeilen: zeilen };
+    };
+    var render = function () {
+      var r = korrigiere(ein.value);
+      log.textContent = '';
+      r.zeilen.forEach(function (z) {
+        var d = document.createElement('div'); d.className = 'z';
+        if (z[0] === 'cmd') { var p = document.createElement('span'); p.className = 't-prompt'; p.textContent = z[1]; d.appendChild(p); d.appendChild(document.createTextNode(z[2])); }
+        else { d.className += ' ' + z[0]; d.textContent = z[1]; }
+        log.appendChild(d);
+      });
+      out.textContent = '';
+      if (!r.toks.length) { out.textContent = '…'; return; }
+      r.toks.forEach(function (o, i) {
+        if (i) out.appendChild(document.createTextNode(' '));
+        if (o.fix) { var m = document.createElement('mark'); m.textContent = o.t; out.appendChild(m); } else out.appendChild(document.createTextNode(o.t));
+      });
+    };
+    var listeZeichnen = function () {
+      liste.textContent = '';
+      begriffe.forEach(function (b) {
+        var li = document.createElement('li'); li.className = 'badge';
+        li.style.setProperty('--c', b.q === 'Firma' ? 'var(--accent)' : (b.q === 'Paket' ? 'var(--idea)' : 'var(--progress)'));
+        li.textContent = b.w + ' · ' + b.q; liste.appendChild(li);
+      });
+    };
+    ein.addEventListener('input', render);
+    $$('.chip-btn').forEach(function (c) { c.addEventListener('click', function () { ein.value = c.textContent; render(); ein.focus(); }); });
+    var hinzu = function () {
+      var w = neu.value.trim(); if (w.length < 3) { neu.focus(); return; }
+      begriffe.unshift({ w: w, q: 'Persönlich' }); neu.value = '';
+      listeZeichnen(); ein.value = ''; ein.placeholder = 'Jetzt eine falsch gehörte Variante von „' + w + '“ eingeben'; ein.focus(); render();
+    };
+    $('#wb-add').addEventListener('click', hinzu);
+    neu.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); hinzu(); } });
+    listeZeichnen(); render();
+  })();
+
+  // ---------- Preisrechner ----------
+  (function () {
+    var regler = $('#personen'); if (!regler) return;
+    var eur = function (n) { return n.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' }); };
+    var rechne = function () {
+      var n = +regler.value;
+      $('#personen-zahl').textContent = n; $('#kicker-n').textContent = n;
+      $('#sum-team').textContent = eur(1.5 * n);
+      $('#sum-team-txt').textContent = 'pro Monat für ' + n + ' Personen';
+      var business = n >= 25, onprem = n >= 50;
+      $('#sum-business').textContent = business ? eur(2.5 * n) : 'ab 25';
+      $('#sum-business-txt').textContent = business ? 'pro Monat für ' + n + ' Personen' : 'Personen verfügbar';
+      $('#sum-onprem').textContent = onprem ? eur(3 * n) : 'ab 50';
+      $('#sum-onprem-txt').textContent = onprem ? 'pro Monat, Box oder Server extra' : 'Personen verfügbar';
+      $('#plan-team').classList.toggle('empfohlen', n < 25);
+      $('#plan-business').classList.toggle('empfohlen', business);
+      $('#plan-business').classList.toggle('aus', !business);
+      $('#plan-onprem').classList.toggle('aus', !onprem);
+    };
+    regler.addEventListener('input', rechne); rechne();
+  })();
+
+  // ---------- Formular ----------
+  (function () {
+    var f = $('#anfrage'); if (!f) return;
+    var meld = $('#f-meldung');
+    var fehler = function (feld, ziel, text) { feld.setAttribute('aria-invalid', text ? 'true' : 'false'); $('#' + ziel).textContent = text || ''; };
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var el = f.elements, erstes = null;
+      var pruefe = function (feld, ziel, ok, text) { fehler(feld, ziel, ok ? '' : text); if (!ok && !erstes) erstes = feld; };
+      pruefe(el.firma, 'e-firma', el.firma.value.trim().length >= 2, 'Bitte geben Sie Ihre Firma an.');
+      pruefe(el.name, 'e-name', el.name.value.trim().length >= 2, 'Bitte geben Sie Ihren Namen an.');
+      pruefe(el.email, 'e-mail', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(el.email.value.trim()), 'Bitte geben Sie eine gültige E-Mail-Adresse an.');
+      pruefe(el.einwilligung, 'e-einw', el.einwilligung.checked, 'Bitte bestätigen Sie die Einwilligung.');
+      if (erstes) { meld.className = 'meldung'; meld.textContent = ''; erstes.focus(); return; }
+      meld.className = 'meldung ok';
+      meld.textContent = 'Entwurf: Das Formular ist noch nicht angebunden. Im fertigen Stand geht die Anfrage per POST an /api/leads.';
+    });
+  })();
+})();
+</script>

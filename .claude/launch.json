@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "design-vorschau", "runtimeExecutable": "node", "runtimeArgs": ["tools/vorschau-server.js"], "port": 4173 }
+  ]
+}

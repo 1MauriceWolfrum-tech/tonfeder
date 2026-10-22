@@ -1,0 +1,1619 @@
+<title>Tonfeder Landingpage</title>
+<meta name="description" content="Designentwurf: Spracheingabe für Teams. Taste halten, sprechen, loslassen. Verarbeitet in Deutschland oder im eigenen Netz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400..600&display=swap">
+<style>
+/* Design-Tokens nach Basis-App: nur dunkel, Lime-Akzent, Terminal-Anmutung */
+:root{
+  color-scheme:dark;
+  --canvas:#0a0f0b; --panel:#121a14; --panel-2:#1a241c; --edge:#27362a; --edge-2:#34483a;
+  --ink:#e8f0e9; --ink-muted:#a8bcab; --ink-dim:#80968a;
+  --accent:#a3e635; --accent-soft:#bef264; --accent-ink:#0a0f0b;
+  --live:#4ade80; --progress:#fcd34d; --idea:#7dd3fc; --danger:#fda4af;
+  --radius:14px;
+  --gutter:clamp(16px,4vw,32px);
+  --f-sans:'Geist',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'Geist Mono',ui-monospace,'Cascadia Mono',Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--canvas);color:var(--ink);font:400 17px/1.65 var(--f-sans);-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+::selection{background:var(--accent);color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+a{color:inherit}
+p{margin:0}
+h1,h2,h3{margin:0;text-wrap:balance;font-family:var(--f-sans)}
+h1{font-size:clamp(46px,7.4vw,98px);font-weight:700;letter-spacing:-.048em;line-height:.94}
+h2{font-size:clamp(31px,4.4vw,56px);font-weight:650;letter-spacing:-.036em;line-height:1.02}
+h3{font-size:18.5px;font-weight:600;letter-spacing:-.012em;line-height:1.3}
+.wrap{max-width:1200px;margin-inline:auto;padding-inline:var(--gutter)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.kicker{font:500 13px/1.4 var(--f-mono);color:var(--accent);letter-spacing:.01em}
+.hl{color:var(--accent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.abschnitt{padding-block:clamp(72px,9vw,128px)}
+.kopfzeile{display:grid;gap:14px;max-width:780px;margin-bottom:clamp(36px,5vw,60px)}
+.kopfzeile .sub{font-size:18.5px;color:var(--ink-muted);max-width:60ch}
+
+/* Scroll-Einblendung: startet sichtbar (0.3), nie unsichtbar */
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{animation:einblenden linear both;animation-timeline:view();animation-range:entry 0% cover 26%}
+  }
+}
+@keyframes einblenden{from{opacity:.3;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}
+
+/* Fortschrittsbalken oben */
+.fortschritt{display:none}
+@supports (animation-timeline: scroll()){
+  .fortschritt{display:block;position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);height:2px;z-index:70;background:var(--accent);transform-origin:0 50%;transform:scaleX(0);animation:wachsen-x linear both;animation-timeline:scroll(root)}
+}
+@keyframes wachsen-x{to{transform:scaleX(1)}}
+
+/* Entwurfszeile + Kopf */
+.entwurf{background:var(--panel);border-bottom:1px solid var(--edge);color:var(--ink-dim);font:400 12px/1.4 var(--f-mono);text-align:center;padding-block:7px;padding-inline:var(--gutter)}
+.kopf{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:rgba(10,15,11,.82);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid var(--edge)}
+.kopf-in{display:flex;align-items:center;gap:20px;min-height:64px}
+.marke{display:inline-flex;align-items:center;gap:10px;font:600 15px var(--f-mono);text-decoration:none;color:var(--ink);transition:color .15s}
+.marke:hover{color:var(--accent)}
+.marke .tilde{color:var(--accent)}
+.logo{width:28px;height:28px;flex:none}
+.nav{display:flex;gap:2px;margin-left:auto}
+.nav a{text-decoration:none;font-size:14.5px;padding:8px 12px;border-radius:8px;color:var(--ink);transition:color .15s}
+.nav a:hover{color:var(--accent)}
+.burger{display:none;align-items:center;justify-content:center;width:44px;height:44px;border-radius:9px;border:1px solid var(--edge);background:transparent;color:var(--ink);cursor:pointer}
+.burger:hover{border-color:var(--accent);color:var(--accent)}
+.mnav{border-top:1px solid var(--edge)}
+.mnav ul{list-style:none;margin:0;padding-block:6px}
+.mnav a{display:block;padding:12px 0;text-decoration:none}
+.mnav a:hover{color:var(--accent)}
+@media (max-width:960px){.nav{display:none}.burger{display:inline-flex}.kopf .btn-sm{margin-left:auto}}
+@media (max-width:400px){.kopf .btn-sm{padding:0 11px}}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:10px;border:1px solid transparent;font:600 15.5px/1 var(--f-sans);text-decoration:none;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .25s,transform .1s}
+.btn:active{transform:translateY(1px)}
+.btn-accent{background:var(--accent);color:var(--accent-ink)}
+.btn-accent:hover{background:var(--accent-soft);box-shadow:0 0 34px -6px rgba(163,230,53,.6)}
+.btn-ghost{background:rgba(18,26,20,.6);border-color:var(--edge-2);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{min-height:40px;padding:0 15px;font-size:14px}
+.btn .pfeil{transition:transform .2s}
+.btn:hover .pfeil{transform:translateX(3px)}
+
+/* Badges (Basis-App: Symbol + Text, nie nur Farbe) */
+.badges{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;border:1px solid color-mix(in srgb,var(--c,var(--live)) 40%,transparent);color:var(--c,var(--live));font:500 12.5px/1.25 var(--f-mono);white-space:nowrap}
+.badge svg{width:12px;height:12px;flex:none}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--edge);padding-block:clamp(40px,6vw,92px) clamp(64px,7vw,108px)}
+.hero-bg{position:absolute;inset:0;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(60px)}
+.b1{width:560px;height:560px;left:-160px;top:-200px;background:radial-gradient(circle,rgba(163,230,53,.28),transparent 65%);animation:schweben 18s ease-in-out infinite alternate}
+.b2{width:680px;height:680px;right:-220px;bottom:-320px;background:radial-gradient(circle,rgba(74,222,128,.2),transparent 65%);animation:schweben 24s ease-in-out infinite alternate-reverse}
+@keyframes schweben{to{transform:translate(90px,70px) scale(1.12)}}
+.gitter{position:absolute;inset:0;background-image:linear-gradient(rgba(232,240,233,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(232,240,233,.05) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse 70% 65% at 62% 38%,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse 70% 65% at 62% 38%,#000 25%,transparent 78%)}
+.hero-in{position:relative;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);gap:clamp(40px,5vw,76px);align-items:center}
+.hero-text{display:grid;gap:24px;justify-items:start}
+.lead{font-size:clamp(17.5px,1.6vw,20px);color:var(--ink-muted);max-width:52ch;line-height:1.6}
+.lead b{color:var(--ink);font-weight:500}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.cursor-block{display:inline-block;width:.085em;height:.8em;margin-left:.05em;vertical-align:-.02em;background:var(--accent);animation:blinken 1.1s steps(1) infinite}
+@keyframes blinken{50%{opacity:0}}
+@media (max-width:980px){.hero-in{grid-template-columns:1fr}}
+
+/* Demo */
+.demo{position:relative;display:grid;gap:30px}
+.win-wrap{position:relative}
+.win{background:var(--panel);border:1px solid var(--edge);border-radius:var(--radius);overflow:hidden;box-shadow:0 40px 90px -40px rgba(0,0,0,.9)}
+.win-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--edge);background:var(--panel-2);font:500 12.5px var(--f-mono);color:var(--ink-muted)}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--edge-2)}
+.win-bar .badge{margin-left:auto;font-size:11px;padding:2px 8px}
+.win-meta{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;margin:0;padding:10px 16px;border-bottom:1px solid var(--edge);font-size:14px}
+.win-meta dt{color:var(--ink-dim)}.win-meta dd{margin:0}
+.win-body{padding:16px 16px 42px;min-height:222px;font-size:15.5px;line-height:1.6}
+.win-body p+p{margin-top:10px}
+.frisch{border-radius:3px;animation:frisch 1.8s ease-out}
+@keyframes frisch{from{background:rgba(163,230,53,.32);box-shadow:0 0 0 3px rgba(163,230,53,.32)}to{background:rgba(163,230,53,0);box-shadow:0 0 0 3px rgba(163,230,53,0)}}
+.caret{display:inline-block;width:2px;height:1.05em;margin-left:1px;vertical-align:-3px;background:var(--accent);animation:blinken 1.05s steps(1) infinite}
+.pill{position:absolute;left:50%;bottom:-19px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:10px;padding:8px 13px 8px 11px;border-radius:999px;background:#050806;border:1px solid var(--edge-2);font:500 13px/1 var(--f-mono);color:var(--ink);white-space:nowrap;box-shadow:0 14px 30px -10px rgba(0,0,0,.85);transition:border-color .2s,box-shadow .2s}
+.pill[data-z="hoert"]{border-color:rgba(163,230,53,.65);box-shadow:0 0 0 5px rgba(163,230,53,.08),0 14px 30px -10px rgba(0,0,0,.85)}
+.pill[data-z="fertig"]{border-color:rgba(74,222,128,.5)}
+.mini-bars{display:flex;align-items:center;gap:2px;height:16px}
+.mini-bars i{width:3px;height:4px;border-radius:2px;background:var(--accent)}
+.pill[data-z="hoert"] .mini-bars i{animation:pegel .7s ease-in-out infinite alternate}
+.pill[data-z="hoert"] .mini-bars i:nth-child(2){animation-duration:.55s;animation-delay:-.2s}
+.pill[data-z="hoert"] .mini-bars i:nth-child(3){animation-duration:.8s;animation-delay:-.4s}
+.pill[data-z="hoert"] .mini-bars i:nth-child(4){animation-duration:.6s;animation-delay:-.1s}
+@keyframes pegel{from{height:3px}to{height:16px}}
+.pill[data-z="schreibt"] .mini-bars i{animation:puls .9s ease-in-out infinite}
+.pill[data-z="schreibt"] .mini-bars i:nth-child(2){animation-delay:.12s}
+.pill[data-z="schreibt"] .mini-bars i:nth-child(3){animation-delay:.24s}
+.pill[data-z="schreibt"] .mini-bars i:nth-child(4){animation-delay:.36s}
+@keyframes puls{0%,100%{opacity:.25}50%{opacity:1}}
+.pill[data-z="fertig"] .mini-bars i{background:var(--live)}
+.pill-zeit{color:var(--ink-dim)}
+.pill-zeit:empty{display:none}
+.steuer{display:grid;gap:12px;padding:14px;border-radius:var(--radius);border:1px solid var(--edge);background:rgba(18,26,20,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.wave{display:block;width:100%;height:56px}
+.hold{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:58px;border-radius:12px;border:1px solid var(--edge-2);background:var(--panel-2);color:var(--ink);font:600 15.5px var(--f-sans);cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-touch-callout:none;transition:background-color .15s,color .15s,border-color .15s,box-shadow .25s}
+.hold:hover{border-color:var(--accent)}
+.hold.an{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);box-shadow:0 0 44px -6px rgba(163,230,53,.65)}
+.hold.lockt::after{content:"";position:absolute;inset:-1px;border-radius:inherit;border:1.5px solid var(--accent);animation:ping 1.8s ease-out infinite;pointer-events:none}
+@keyframes ping{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.05)}}
+.key{display:inline-flex;align-items:center;justify-content:center;min-width:2.4em;padding:5px 9px 6px;border-radius:7px;font:600 12.5px/1 var(--f-mono);background:var(--canvas);color:var(--ink);border:1px solid var(--edge-2);box-shadow:inset 0 -3px 0 var(--edge);transition:transform .08s,box-shadow .08s}
+.hold.an .key{transform:translateY(2px);box-shadow:inset 0 -1px 0 var(--edge)}
+.steuer-fuss{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 14px;font:400 12.5px/1.45 var(--f-mono);color:var(--ink-dim)}
+.textlink{background:none;border:0;padding:4px 0;color:var(--accent);font:500 12.5px var(--f-mono);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* Laufband */
+.laufband{position:relative;overflow:hidden;border-bottom:1px solid var(--edge);background:var(--panel);padding-block:15px}
+.laufband-in{display:flex;width:max-content;animation:laufen 42s linear infinite}
+.laufband:hover .laufband-in{animation-play-state:paused}
+.laufband ul{display:flex;gap:34px;margin:0;padding:0 17px;list-style:none;font:500 14px var(--f-mono);color:var(--ink-muted);white-space:nowrap}
+.laufband li::before{content:"▸ ";color:var(--accent)}
+.laufband::before,.laufband::after{content:"";position:absolute;top:0;bottom:0;width:80px;z-index:1;pointer-events:none}
+.laufband::before{left:0;background:linear-gradient(90deg,var(--panel),transparent)}
+.laufband::after{right:0;background:linear-gradient(-90deg,var(--panel),transparent)}
+@keyframes laufen{to{transform:translateX(-50%)}}
+
+/* Einsatzbereiche mit Fotos */
+.persona{display:grid;grid-template-columns:minmax(240px,.4fr) minmax(0,1fr);gap:clamp(14px,2.4vw,26px);align-items:stretch}
+.p-tabs{display:grid;gap:8px;align-content:start}
+.p-tab{position:relative;display:grid;gap:2px;text-align:left;padding:14px 16px 16px;border-radius:12px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);font:inherit;cursor:pointer;overflow:hidden;transition:border-color .2s,background-color .2s}
+.p-tab:hover{border-color:rgba(163,230,53,.5)}
+.p-tab[aria-selected="true"]{border-color:var(--accent);background:var(--panel-2)}
+.p-tab .pfad{font:500 12px var(--f-mono);color:var(--accent)}
+.p-tab b{font-size:17px;font-weight:600}
+.p-tab .unter{font-size:14px;color:var(--ink-muted)}
+.p-tab .lauf{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+.p-tab .lauf.an{animation:wachsen-x 7s linear forwards}
+.p-buehne{position:relative;min-height:460px;border-radius:18px;overflow:hidden;border:1px solid var(--edge);background:var(--panel)}
+.p-buehne img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.07);transition:opacity .8s ease,transform 7s ease-out}
+.p-buehne img.an{opacity:1;transform:scale(1)}
+.p-buehne::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(10,15,11,0) 35%,rgba(10,15,11,.9) 100%),linear-gradient(90deg,rgba(10,15,11,.35),rgba(10,15,11,0) 55%)}
+.p-buehne .pill{left:auto;right:clamp(14px,2.5vw,22px);top:clamp(14px,2.5vw,22px);bottom:auto;transform:none}
+.p-karte{position:absolute;z-index:2;left:clamp(14px,2.5vw,26px);right:clamp(14px,2.5vw,26px);bottom:clamp(14px,2.5vw,26px);max-width:580px;border-radius:14px;border:1px solid var(--edge-2);background:rgba(18,26,20,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);overflow:hidden}
+.p-karte-kopf{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--edge);font:500 12.5px var(--f-mono);color:var(--ink-muted)}
+.p-karte-kopf .dots i{width:8px;height:8px}
+.p-text{padding:14px;font-size:15.5px;min-height:6.2em}
+@media (max-width:880px){
+  .persona{grid-template-columns:1fr}
+  .p-tabs{grid-auto-flow:column;grid-auto-columns:minmax(168px,1fr);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+  .p-tab{scroll-snap-align:start}
+  .p-buehne{min-height:440px}
+}
+
+/* So funktioniert's: Bento */
+.bento{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px}
+.foto-karte{position:relative;min-height:440px;border-radius:18px;overflow:hidden;border:1px solid var(--edge)}
+.foto-karte img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.foto-karte::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,15,11,.1),rgba(10,15,11,.85) 85%)}
+.foto-over{position:absolute;z-index:1;left:22px;right:22px;bottom:22px;display:grid;gap:12px}
+.zahlen{display:grid;gap:10px;list-style:none;margin:0;padding:0}
+.zahlen li{display:flex;align-items:baseline;gap:12px;font-size:15.5px;color:var(--ink-muted)}
+.zahlen b{min-width:4.2em;font:600 20px var(--f-mono);color:var(--accent)}
+.schritte{display:grid;gap:16px;list-style:none;margin:0;padding:0}
+.schritt{display:grid;grid-template-columns:118px 1fr;gap:20px;align-items:center;padding:20px;border-radius:16px;border:1px solid var(--edge);background:var(--panel);transition:border-color .2s}
+.schritt:hover{border-color:rgba(163,230,53,.6)}
+.schritt .vis{height:78px;border-radius:12px;border:1px solid var(--edge);background:var(--canvas);display:grid;place-items:center;overflow:hidden}
+.schritt .nr{font:500 12px var(--f-mono);color:var(--accent)}
+.schritt p{color:var(--ink-muted);font-size:15.5px;margin-top:4px}
+.vis .key{animation:druecken 2.4s ease-in-out infinite}
+@keyframes druecken{0%,18%,72%,100%{transform:none;box-shadow:inset 0 -3px 0 var(--edge);background:var(--canvas);color:var(--ink)}24%,66%{transform:translateY(2px);box-shadow:inset 0 -1px 0 var(--edge);background:var(--accent);color:var(--accent-ink)}}
+.vis .mini-bars{height:34px;gap:3px}
+.vis .mini-bars i{width:4px;animation:pegel2 .8s ease-in-out infinite alternate}
+.vis .mini-bars i:nth-child(2n){animation-duration:.6s;animation-delay:-.3s}
+.vis .mini-bars i:nth-child(3n){animation-duration:.9s;animation-delay:-.5s}
+@keyframes pegel2{from{height:5px}to{height:32px}}
+.vis .tipp{font:500 12.5px var(--f-mono);color:var(--ink)}
+@media (max-width:880px){.bento{grid-template-columns:1fr}.foto-karte{min-height:340px}}
+@media (max-width:440px){.schritt{grid-template-columns:1fr}}
+
+/* Bildband */
+.band{position:relative;overflow:hidden;border-block:1px solid var(--edge);background:var(--panel)}
+.band-flaeche{position:relative;height:clamp(320px,42vw,560px)}
+.band-flaeche img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.7,0,.2,1)}
+.band-flaeche img.links{transform:translateX(-100%)}
+.band-flaeche img.rechts{transform:translateX(100%)}
+.band-flaeche::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(10,15,11,.92),rgba(10,15,11,.25) 55%,rgba(10,15,11,0)),linear-gradient(90deg,rgba(10,15,11,.6),rgba(10,15,11,0) 60%)}
+.band-text{position:absolute;z-index:2;left:0;right:0;bottom:clamp(20px,4vw,44px)}
+.band-text h2{font-size:clamp(26px,4vw,50px);max-width:18ch}
+.band-text .kicker span:last-child{color:var(--ink-dim)}
+.band-dots{position:absolute;z-index:3;top:4px;right:4px;display:flex}
+.band-dots button{width:44px;height:44px;display:grid;place-items:center;background:none;border:0;cursor:pointer}
+.band-dots i{width:10px;height:10px;border-radius:50%;border:1px solid rgba(10,15,11,.7);background:rgba(10,15,11,.5);transition:background-color .2s}
+.band-dots button[aria-current="true"] i{background:var(--accent)}
+
+/* Datenstandort */
+.ort{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:clamp(24px,4vw,56px);align-items:start}
+.ort .kopfzeile{margin-bottom:26px}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:12px;border:1px solid var(--edge);background:var(--panel)}
+.seg button{min-height:42px;padding:0 14px;border-radius:9px;border:0;background:transparent;color:var(--ink-muted);font:600 14.5px var(--f-sans);cursor:pointer;transition:background-color .15s,color .15s}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.fakten{margin:26px 0 0;border-top:1px solid var(--edge)}
+.fakten div{display:grid;gap:2px;padding:14px 0;border-bottom:1px solid var(--edge)}
+.fakten dt{font:500 12px var(--f-mono);color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em}
+.fakten dd{margin:0;font-weight:600;font-size:17px}
+.fakten dd small{display:block;font-weight:400;font-size:14.5px;color:var(--ink-muted)}
+.diagramm{margin:0;border:1px solid var(--edge);border-radius:18px;background:var(--canvas);padding:10px;overflow-x:auto}
+.diagramm svg{display:block;width:100%;min-width:600px;height:auto}
+.diagramm figcaption{padding:8px 6px 2px;font:400 12px var(--f-mono);color:var(--ink-dim)}
+.z-rahmen{fill:rgba(18,26,20,.35);stroke:var(--edge-2);stroke-width:1.5;stroke-dasharray:6 4}
+.z-label{fill:var(--accent);font:600 12px var(--f-mono)}
+.z-sub{fill:var(--ink-dim);font:400 11px var(--f-mono)}
+.box{fill:var(--panel);stroke:rgba(168,188,171,.55);stroke-width:1.5}
+.box.akzent{stroke:var(--accent)}
+.b-label{fill:var(--ink);font:600 13px var(--f-mono)}
+.b-sub{fill:var(--ink-muted);font:400 11px var(--f-mono)}
+.weg{fill:none;stroke:rgba(163,230,53,.75);stroke-width:1.5}
+.weg.zurueck{stroke:rgba(125,211,252,.7)}
+.weg.leicht{stroke:rgba(168,188,171,.55);stroke-dasharray:4 5}
+.w-label{font:500 11px var(--f-mono);fill:var(--accent)}
+.w-label.zurueck{fill:var(--idea)}
+.w-label.leicht{fill:var(--ink-dim)}
+.paket{fill:var(--accent)}
+.paket.text{fill:var(--idea)}
+.paket.zaehler{fill:var(--ink-muted)}
+.paket-label{font:600 11px var(--f-mono);fill:var(--accent)}
+.paket-label.text{fill:var(--idea)}
+.paket-label.zaehler{fill:var(--ink-muted)}
+@media (max-width:980px){.ort{grid-template-columns:1fr}}
+
+/* IT */
+.it{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,3vw,40px);align-items:start}
+.features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;list-style:none;margin:0;padding:0}
+.feature{display:grid;gap:8px;align-content:start;padding:18px;border-radius:14px;border:1px solid var(--edge);background:var(--panel);transition:border-color .2s}
+.feature:hover{border-color:rgba(163,230,53,.6)}
+.feature .ico{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.feature p{font-size:15px;color:var(--ink-muted)}
+.spot{position:relative;isolation:isolate}
+.spot::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:radial-gradient(340px circle at var(--mx,50%) var(--my,-30%),rgba(163,230,53,.11),transparent 60%);opacity:0;transition:opacity .3s}
+.spot:hover::before{opacity:1}
+.terminal{position:sticky;top:88px;border-radius:16px;border:1px solid var(--edge);background:#060a07;overflow:hidden;box-shadow:0 40px 80px -40px rgba(0,0,0,.9)}
+.term-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--edge);background:var(--panel)}
+.term-tabs{display:flex;gap:4px;margin-left:6px;overflow-x:auto}
+.term-tab{min-height:34px;padding:0 11px;border-radius:7px;border:1px solid transparent;background:none;color:var(--ink-muted);font:500 12.5px var(--f-mono);cursor:pointer;white-space:nowrap}
+.term-tab:hover{color:var(--ink)}
+.term-tab[aria-selected="true"]{color:var(--accent);border-color:var(--edge-2);background:var(--canvas)}
+.term-body{padding:16px 16px 20px;min-height:280px;font:400 13.5px/1.8 var(--f-mono);overflow-x:auto}
+.term-body .z{white-space:pre}
+.t-prompt{color:var(--accent)}.t-ok{color:var(--live)}.t-info{color:var(--idea)}.t-dim{color:var(--ink-dim)}
+@media (max-width:980px){.it{grid-template-columns:1fr}.terminal{position:static}}
+@media (max-width:560px){.features{grid-template-columns:1fr}}
+
+/* Portal-Mock */
+.browser{border-radius:18px;border:1px solid var(--edge);background:var(--panel);overflow:hidden;box-shadow:0 40px 90px -45px rgba(0,0,0,.9)}
+.browser-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--edge);background:var(--panel-2)}
+.url{flex:1;max-width:440px;padding:6px 10px;border-radius:8px;border:1px solid var(--edge);background:var(--canvas);font:400 12.5px var(--f-mono);color:var(--ink-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.portal{display:grid;grid-template-columns:210px minmax(0,1fr);min-height:400px}
+.portal-nav{display:grid;gap:4px;align-content:start;padding:14px 10px;border-right:1px solid var(--edge)}
+.portal-firma{padding:4px 10px 12px;font:600 13px var(--f-mono);color:var(--ink)}
+.portal-firma small{display:block;font-weight:400;color:var(--ink-dim)}
+.portal-nav button{min-height:40px;text-align:left;padding:0 12px;border-radius:9px;border:0;background:none;color:var(--ink-muted);font:500 14.5px var(--f-sans);cursor:pointer}
+.portal-nav button:hover{color:var(--ink)}
+.portal-nav button[aria-selected="true"]{background:var(--panel-2);color:var(--accent)}
+.portal-main{padding:18px;min-width:0}
+.portal-main h3{margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.kpi{display:grid;gap:2px;padding:14px;border-radius:12px;border:1px solid var(--edge);background:var(--canvas)}
+.kpi b{font:600 30px/1.1 var(--f-sans);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi span{font-size:13.5px;color:var(--ink-muted)}
+.chart{display:grid;grid-template-columns:26px 1fr;gap:8px}
+.chart-y{display:flex;flex-direction:column;justify-content:space-between;height:146px;margin-top:-6px;font:400 11px var(--f-mono);color:var(--ink-dim);text-align:right}
+.chart-f{position:relative;height:140px;display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:5px;align-items:end;background:linear-gradient(var(--edge),var(--edge)) 0 0/100% 1px no-repeat,linear-gradient(var(--edge),var(--edge)) 0 50%/100% 1px no-repeat,linear-gradient(var(--ink-dim),var(--ink-dim)) 0 100%/100% 1px no-repeat}
+.chart-f i{display:block;height:var(--h);border-radius:3px 3px 0 0;background:rgba(163,230,53,.55);transform-origin:50% 100%}
+.chart-f i.heute{background:var(--accent)}
+.chart-f.wachsen i{animation:wachsen-y .9s cubic-bezier(.2,.8,.2,1) both}
+.chart-f.wachsen i:nth-child(n){animation-delay:calc(var(--d,0) * 40ms)}
+@keyframes wachsen-y{from{transform:scaleY(0)}}
+.chart-x{grid-column:2;display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:5px;font:400 10.5px var(--f-mono);color:var(--ink-dim);text-align:center}
+.notiz{margin-top:12px;font-size:13px;color:var(--ink-dim)}
+.tabelle{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+.portal table{min-width:560px}
+th{padding:8px 10px;border-bottom:1px solid var(--edge);text-align:left;font:500 11.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);white-space:nowrap}
+td{padding:11px 10px;border-bottom:1px solid var(--edge);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.rechts{text-align:right}
+.mini{min-height:34px;padding:0 11px;border-radius:8px;border:1px solid var(--edge-2);background:var(--canvas);color:var(--ink);font:500 13px var(--f-sans);cursor:pointer;white-space:nowrap}
+.mini:hover{border-color:var(--accent);color:var(--accent)}
+.mini.primaer{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (max-width:760px){.portal{grid-template-columns:1fr}.portal-nav{grid-auto-flow:column;grid-auto-columns:max-content;overflow-x:auto;border-right:0;border-bottom:1px solid var(--edge)}.portal-firma{display:none}}
+@media (max-width:560px){.kpis{grid-template-columns:1fr}.kpi{grid-template-columns:auto 1fr;align-items:baseline;gap:10px}}
+
+/* Wörterbuch-Spielwiese */
+.wb{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(20px,3vw,40px);align-items:start}
+.feld{display:grid;gap:6px}
+.feld label{font-weight:500;font-size:14.5px}
+.feld label small{font-weight:400;color:var(--ink-dim)}
+input,select,textarea{width:100%;font:400 16px var(--f-sans);color:var(--ink);background:var(--panel);border:1px solid var(--edge-2);border-radius:10px;padding:12px 13px;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(163,230,53,.18)}
+input[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:var(--danger)}
+.gross{font:500 18px var(--f-mono);padding:14px 15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-btn{min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--edge-2);background:var(--panel);color:var(--ink);font:500 13px var(--f-mono);cursor:pointer}
+.chip-btn:hover{border-color:var(--accent);color:var(--accent)}
+.wb-links{display:grid;gap:22px}
+.reihe-add{display:grid;grid-template-columns:1fr auto;gap:8px}
+.begriffe{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.ausgabe{border-radius:16px;border:1px solid var(--edge);background:#060a07;overflow:hidden}
+.ausgabe-log{padding:16px;font:400 13px/1.8 var(--f-mono);min-height:150px;overflow-x:auto}
+.ausgabe-log .z{white-space:pre-wrap;word-break:break-word}
+.ergebnis{padding:18px 16px;border-top:1px solid var(--edge);background:var(--panel);font-size:20px;font-weight:500;letter-spacing:-.01em;min-height:72px}
+.ergebnis mark{background:transparent;color:var(--accent);border-bottom:2px solid var(--accent);padding-bottom:1px}
+.ergebnis-label{display:block;margin-bottom:4px;font:500 12px var(--f-mono);color:var(--ink-dim)}
+@media (max-width:920px){.wb{grid-template-columns:1fr}}
+
+/* Preisrechner */
+.rechner{display:grid;gap:22px}
+.regler-zeile{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;padding:20px;border-radius:16px;border:1px solid var(--edge);background:var(--panel)}
+.regler-zeile label{font-weight:500}
+.regler-zahl{font:600 34px/1 var(--f-mono);color:var(--accent);min-width:3.2ch}
+input[type="range"]{flex:1;min-width:200px;padding:0;border:0;background:transparent;accent-color:var(--accent);height:30px;box-shadow:none}
+.plaene{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.plan{display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:16px;border:1px solid var(--edge);background:var(--panel);transition:border-color .25s,box-shadow .25s,opacity .25s}
+.plan.empfohlen{border-color:var(--accent);box-shadow:0 0 0 1px rgba(163,230,53,.35),0 0 50px -16px rgba(163,230,53,.45)}
+.plan.aus{opacity:.5}
+.plan-kopf{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.plan-name{font:600 13px var(--f-mono);color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
+.plan-preis{font:600 15px var(--f-sans);color:var(--ink-muted)}
+.plan-summe b{display:block;font:650 40px/1.05 var(--f-sans);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.plan-summe span{font-size:14px;color:var(--ink-muted)}
+.plan ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:15px;color:var(--ink-muted)}
+.plan li{display:grid;grid-template-columns:18px 1fr;gap:8px}
+.plan li::before{content:"✓";font:600 13px var(--f-mono);color:var(--live)}
+.plan .btn{margin-top:auto}
+.preis-fuss{font-size:13.5px;color:var(--ink-dim)}
+@media (max-width:900px){.plaene{grid-template-columns:1fr}}
+
+/* Ablauf */
+.ablauf{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;list-style:none;margin:0;padding:0}
+.ablauf::before,.ablauf::after{content:"";position:absolute;left:0;right:0;top:9px;height:2px}
+.ablauf::before{background:var(--edge)}
+.ablauf::after{background:var(--accent);transform-origin:0 50%}
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    .ablauf::after{animation:wachsen-x linear both;animation-timeline:view();animation-range:entry 20% cover 55%;transform:scaleX(0)}
+  }
+}
+.ablauf li{position:relative;display:grid;gap:8px;align-content:start;padding-top:36px}
+.ablauf li::before{content:"";position:absolute;top:0;left:0;z-index:1;width:20px;height:20px;border-radius:50%;background:var(--canvas);border:2px solid var(--accent)}
+.ablauf .wann{font:500 12.5px var(--f-mono);color:var(--accent)}
+.ablauf p{color:var(--ink-muted);font-size:15.5px}
+@media (max-width:900px){.ablauf{grid-template-columns:repeat(2,minmax(0,1fr))}.ablauf::before,.ablauf::after{display:none}}
+@media (max-width:520px){.ablauf{grid-template-columns:1fr}}
+
+/* FAQ */
+.faq{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,5vw,72px);align-items:start}
+.faq .kopfzeile{margin-bottom:0}
+.faq-liste{border-top:1px solid var(--edge)}
+details{border-bottom:1px solid var(--edge)}
+summary{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:44px;padding:18px 2px;cursor:pointer;list-style:none;font-weight:500;font-size:17.5px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";flex:none;font:400 22px/1 var(--f-mono);color:var(--accent);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+summary:hover{color:var(--accent)}
+details p{padding:0 2px 20px;color:var(--ink-muted);max-width:64ch}
+@media (max-width:860px){.faq{grid-template-columns:1fr}}
+
+/* Pilot + Formular */
+.pilot{position:relative;overflow:hidden;border-top:1px solid var(--edge)}
+.pilot .blob{opacity:.8}
+.pilot-in{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:start}
+.danach{display:grid;gap:12px;list-style:none;margin:0;padding:0;counter-reset:d}
+.danach li{display:grid;grid-template-columns:30px 1fr;gap:12px;color:var(--ink-muted);counter-increment:d}
+.danach li::before{content:counter(d);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--edge-2);font:600 12.5px var(--f-mono);color:var(--accent)}
+.kontakt{margin-top:24px;font:400 14px var(--f-mono);color:var(--ink-dim)}
+.kontakt b{color:var(--ink);font-weight:500;user-select:all}
+.formular{display:grid;gap:16px;padding:clamp(20px,3vw,28px);border-radius:18px;border:1px solid var(--edge);background:rgba(18,26,20,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.formular .reihe{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.fehler-text{font-size:13px;color:var(--danger)}
+.fehler-text:empty{display:none}
+textarea{resize:vertical;min-height:90px}
+.einw{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:13.5px;color:var(--ink-muted);align-items:start}
+.einw input{width:18px;height:18px;margin:2px 0 0;padding:0;accent-color:var(--accent)}
+.honig{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.formular .btn{justify-self:start}
+.meldung{font-size:14.5px;min-height:1.4em}
+.meldung.ok{color:var(--live)}
+@media (max-width:920px){.pilot-in{grid-template-columns:1fr}}
+@media (max-width:520px){.formular .reihe{grid-template-columns:1fr}}
+
+/* Fuß */
+.fuss{border-top:1px solid var(--edge);padding-block:34px;font-size:14px;color:var(--ink-muted)}
+.fuss-in{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px 28px}
+.fuss nav{display:flex;flex-wrap:wrap;gap:8px 22px}
+.fuss .mono{font-size:12.5px;color:var(--ink-dim)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .laufband-in{width:auto}
+  .laufband ul{flex-wrap:wrap;white-space:normal;row-gap:6px}
+  .laufband ul[aria-hidden="true"]{display:none}
+  .paket,.paket-label{display:none}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 32 32">
+    <rect width="32" height="32" rx="8" fill="#a3e635"/>
+    <path d="M10.5 6.5h11M10.5 25.5h11" stroke="#0a0f0b" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <rect x="9.4" y="13.5" width="2.2" height="5" rx="1.1" fill="#0a0f0b"/>
+    <rect x="12.9" y="11" width="2.2" height="10" rx="1.1" fill="#0a0f0b"/>
+    <rect x="16.4" y="9" width="2.2" height="14" rx="1.1" fill="#0a0f0b"/>
+    <rect x="19.9" y="12" width="2.2" height="8" rx="1.1" fill="#0a0f0b"/>
+  </symbol>
+  <symbol id="haken" viewBox="0 0 12 12"><path d="M2 6.5L5 9.5L10 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+</svg>
+
+<div class="fortschritt" aria-hidden="true"></div>
+<div class="entwurf">Designentwurf · Arbeitstitel „Tonfeder“ · Preise sind Planungsstand · Fotos: Unsplash</div>
+
+<header class="kopf">
+  <div class="wrap kopf-in">
+    <a class="marke" href="#top" aria-label="Tonfeder, zum Seitenanfang"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span><span class="tilde" aria-hidden="true">~/</span>tonfeder</span></a>
+    <nav class="nav" aria-label="Hauptnavigation">
+      <a href="#einsatz">Einsatz</a>
+      <a href="#so">So geht’s</a>
+      <a href="#ort">Datenstandort</a>
+      <a href="#it">Für die IT</a>
+      <a href="#woerterbuch">Wörterbuch</a>
+      <a href="#preise">Preise</a>
+    </nav>
+    <a class="btn btn-accent btn-sm" href="#pilot">Pilot starten</a>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="mnav">
+      <span class="sr">Menü öffnen</span>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg>
+    </button>
+  </div>
+  <nav class="mnav" id="mnav" aria-label="Hauptnavigation mobil" hidden>
+    <ul class="wrap">
+      <li><a href="#einsatz">Einsatz</a></li>
+      <li><a href="#so">So geht’s</a></li>
+      <li><a href="#ort">Datenstandort</a></li>
+      <li><a href="#it">Für die IT</a></li>
+      <li><a href="#woerterbuch">Wörterbuch</a></li>
+      <li><a href="#preise">Preise</a></li>
+      <li><a href="#fragen">Fragen</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="h-hero">
+    <div class="hero-bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="gitter"></div></div>
+    <div class="wrap hero-in">
+      <div class="hero-text">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder --listen</p>
+        <h1 id="h-hero">Gesagt.<br><span class="hl">Geschrieben.</span><span class="cursor-block" aria-hidden="true"></span></h1>
+        <p class="lead">Taste halten, sprechen, loslassen. Tonfeder schreibt Ihren Text dorthin, wo der Cursor steht. <b>Verarbeitet in Deutschland oder in Ihrem eigenen Netz</b>, verteilt von Ihrer IT wie jede andere Software.</p>
+        <div class="ctas">
+          <a class="btn btn-accent" href="#pilot">30 Tage Pilot starten <span class="pfeil" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost" href="#demo">Selbst ausprobieren</a>
+        </div>
+        <ul class="badges" aria-label="Kurz gesagt">
+          <li class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>Server in Deutschland</li>
+          <li class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>Kein Ton gespeichert</li>
+          <li class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>MSI für Intune &amp; GPO</li>
+        </ul>
+      </div>
+
+      <div class="demo" id="demo" aria-label="Interaktive Vorführung">
+        <div class="win-wrap">
+          <div class="win">
+            <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Neue E-Mail</span><span class="badge" title="Verarbeitet in Deutschland"><svg aria-hidden="true"><use href="#haken"/></svg>DE</span></div>
+            <dl class="win-meta">
+              <dt>An</dt><dd>Mehmet Yilmaz</dd>
+              <dt>Betreff</dt><dd>AW: Messprotokoll Halle 3</dd>
+            </dl>
+            <div class="win-body" id="demo-text" aria-live="polite">
+              <p>Guten Tag Herr Yilmaz,</p>
+              <p class="vorab"><span>die Messwerte der Lüftungsanlage in Halle 3 liegen vor. Alle Werte liegen im Rahmen der DIN EN 16798.</span><span class="caret" aria-hidden="true"></span></p>
+            </div>
+          </div>
+          <div class="pill" id="demo-pill" data-z="fertig">
+            <span class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span class="pill-text">Eingefügt</span>
+            <span class="pill-zeit">1,4 s</span>
+          </div>
+        </div>
+        <div class="steuer">
+          <canvas class="wave" aria-hidden="true"></canvas>
+          <button class="hold" id="hold" type="button" aria-pressed="false" aria-describedby="hold-hint"><kbd class="key">Strg</kbd><span>Gedrückt halten und sprechen</span></button>
+          <div class="steuer-fuss">
+            <span id="hold-hint">Satz 2 von 3 · Maus, Finger, Leertaste oder rechte Strg-Taste</span>
+            <button class="textlink" id="demo-neu" type="button" hidden>Neue E-Mail</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAUFBAND -->
+  <div class="laufband" aria-label="Funktioniert in jedem Textfeld">
+    <div class="laufband-in">
+      <ul>
+        <li>E-Mail</li><li>CRM</li><li>Word</li><li>Teams</li><li>Browser</li><li>ERP</li><li>Ticketsystem</li><li>Excel-Zelle</li><li>Webformular</li><li>Terminalserver</li><li>Citrix</li><li>Notizen</li>
+      </ul>
+      <ul aria-hidden="true">
+        <li>E-Mail</li><li>CRM</li><li>Word</li><li>Teams</li><li>Browser</li><li>ERP</li><li>Ticketsystem</li><li>Excel-Zelle</li><li>Webformular</li><li>Terminalserver</li><li>Citrix</li><li>Notizen</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EINSATZ -->
+  <section class="abschnitt" id="einsatz" aria-labelledby="h-einsatz">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>who --diktiert</p>
+        <h2 id="h-einsatz">Überall, wo heute <span class="hl">getippt</span> wird.</h2>
+        <p class="sub">Berichte beim Kunden, Notizen zwischen zwei Terminen, E-Mails im Büro. Tonfeder schreibt in das Programm, das gerade offen ist.</p>
+      </div>
+      <div class="persona reveal">
+        <div class="p-tabs" role="tablist" aria-label="Einsatzbereiche">
+          <button class="p-tab" role="tab" id="pt-0" aria-controls="p-panel" aria-selected="true"><span class="pfad">~/service</span><b>Service</b><span class="unter">Berichte direkt beim Kunden</span><span class="lauf" aria-hidden="true"></span></button>
+          <button class="p-tab" role="tab" id="pt-1" aria-controls="p-panel" aria-selected="false" tabindex="-1"><span class="pfad">~/werkstatt</span><b>Werkstatt</b><span class="unter">Prüfprotokolle ohne Tippen</span><span class="lauf" aria-hidden="true"></span></button>
+          <button class="p-tab" role="tab" id="pt-2" aria-controls="p-panel" aria-selected="false" tabindex="-1"><span class="pfad">~/lager</span><b>Lager</b><span class="unter">Wareneingang mit Tablet</span><span class="lauf" aria-hidden="true"></span></button>
+          <button class="p-tab" role="tab" id="pt-3" aria-controls="p-panel" aria-selected="false" tabindex="-1"><span class="pfad">~/aussendienst</span><b>Außendienst</b><span class="unter">Notizen zwischen zwei Terminen</span><span class="lauf" aria-hidden="true"></span></button>
+          <button class="p-tab" role="tab" id="pt-4" aria-controls="p-panel" aria-selected="false" tabindex="-1"><span class="pfad">~/buero</span><b>Büro</b><span class="unter">E-Mails in einem Rutsch</span><span class="lauf" aria-hidden="true"></span></button>
+        </div>
+        <div class="p-buehne" id="p-panel" role="tabpanel" aria-labelledby="pt-0">
+          <img class="an" src="img/service.webp" alt="Elektriker mit gelbem Schutzhelm prüft einen Schaltkasten." width="1400" height="1050" decoding="async">
+          <img src="img/werkstatt.webp" alt="Laptop auf einer Werkbank, umgeben von Werkzeugen." width="1400" height="1050" loading="lazy" decoding="async">
+          <img src="img/lager.webp" alt="Mann mit Weste liest im Lager auf einem Tablet." width="1400" height="1050" loading="lazy" decoding="async">
+          <img src="img/aussendienst.webp" alt="Frau sitzt im offenen Kofferraum eines Transporters und arbeitet auf einem Tablet." width="1400" height="1050" loading="lazy" decoding="async">
+          <img src="img/buero.webp" alt="Frau mit Headset lächelt vor ihrem Laptop im Büro." width="1400" height="1050" loading="lazy" decoding="async">
+          <div class="pill" id="p-pill" data-z="fertig">
+            <span class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span class="pill-text">Eingefügt</span>
+            <span class="pill-zeit">1,9 s</span>
+          </div>
+          <div class="p-karte">
+            <div class="p-karte-kopf"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="p-app">Servicebericht · Auftrag 24-1187</span></div>
+            <p class="p-text" id="p-text">Kältekreis geprüft, Drücke im Sollbereich. Verdampfer gereinigt und Filtertrockner getauscht. Nächste Wartung im März.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SO GEHT'S -->
+  <section class="abschnitt" id="so" aria-labelledby="h-so" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder --help</p>
+        <h2 id="h-so">Drei Handgriffe. <span class="hl">Keine Schulung.</span></h2>
+        <p class="sub">Tonfeder sitzt in der Taskleiste. Es gibt kein Fenster, das man öffnen muss, und keine Oberfläche, die man lernen muss.</p>
+      </div>
+      <div class="bento">
+        <div class="foto-karte reveal">
+          <img src="img/mikrofon.webp" alt="Schwarzes Mikrofon vor dunklem Hintergrund." width="1200" height="1400" loading="lazy" decoding="async">
+          <div class="foto-over">
+            <ul class="zahlen">
+              <li><b>15 min</b>am Stück diktieren</li>
+              <li><b>DE+EN</b>automatisch erkannt, auch gemischt</li>
+              <li><b>¶</b>Sprachbefehle wie „neuer Absatz“</li>
+            </ul>
+          </div>
+        </div>
+        <ol class="schritte">
+          <li class="schritt spot reveal">
+            <div class="vis" aria-hidden="true"><kbd class="key">Strg</kbd></div>
+            <div><span class="nr">Schritt 1</span><h3>Taste halten</h3><p>Die rechte Strg-Taste braucht sonst kaum jemand. Ihre IT kann sie für alle ändern.</p></div>
+          </li>
+          <li class="schritt spot reveal">
+            <div class="vis" aria-hidden="true"><span class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+            <div><span class="nr">Schritt 2</span><h3>Sprechen</h3><p>So, wie Sie reden. Mit Pausen, Zahlen und Fachbegriffen. Satzzeichen setzt Tonfeder selbst.</p></div>
+          </li>
+          <li class="schritt spot reveal">
+            <div class="vis" aria-hidden="true"><span class="tipp">… 12 Uhr.<span class="caret"></span></span></div>
+            <div><span class="nr">Schritt 3</span><h3>Loslassen</h3><p>Nach ein bis zwei Sekunden steht der Text am Cursor, in jedem Programm, in das Sie auch tippen können.</p></div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- BILDBAND -->
+  <section class="band" aria-roledescription="Karussell" aria-label="Bilder aus dem Rechenzentrum">
+    <div class="band-flaeche">
+      <img src="img/server-gruen.webp" alt="Serverschrank mit grün leuchtenden Netzwerkkabeln." width="2000" height="900" loading="lazy" decoding="async">
+      <img class="links" src="img/server-kabel.webp" alt="Reihen von Serverschränken mit gebündelten Kabeln." width="1800" height="810" loading="lazy" decoding="async" aria-hidden="true">
+      <div class="band-text">
+        <div class="wrap">
+          <p class="kicker" id="band-kicker"><span aria-hidden="true">$ </span>pwd <span>→ /rechenzentrum/nuernberg</span></p>
+          <h2 id="band-satz">Ihre Sprache bleibt in Deutschland.</h2>
+        </div>
+      </div>
+      <div class="band-dots">
+        <button type="button" aria-label="Bild 1 zeigen" aria-current="true"><i></i></button>
+        <button type="button" aria-label="Bild 2 zeigen"><i></i></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATENSTANDORT -->
+  <section class="abschnitt" id="ort" aria-labelledby="h-ort">
+    <div class="wrap ort">
+      <div class="reveal">
+        <div class="kopfzeile">
+          <p class="kicker"><span aria-hidden="true">$ </span>tonfeder config --ort</p>
+          <h2 id="h-ort">Sie bestimmen, wo Ihre Sprache verarbeitet wird.</h2>
+          <p class="sub">Drei Betriebsarten, eine App. Umgestellt wird im Portal, auf den Rechnern ändert sich nichts.</p>
+        </div>
+        <div class="seg" role="group" aria-label="Betriebsart wählen">
+          <button type="button" data-ort="cloud" aria-pressed="true">Cloud DE</button>
+          <button type="button" data-ort="rz" aria-pressed="false">Ihr Rechenzentrum</button>
+          <button type="button" data-ort="box" aria-pressed="false">Tonfeder Box</button>
+        </div>
+        <dl class="fakten" aria-live="polite">
+          <div><dt>Ton verlässt Ihr Haus</dt><dd id="f-ton">Ja, verschlüsselt nach Nürnberg<small>und nirgendwo sonst hin</small></dd></div>
+          <div><dt>Gespeichert wird</dt><dd id="f-speicher">Nur Dauer und Anzahl<small>Ton und Text verwerfen wir nach der Rückgabe</small></dd></div>
+          <div><dt>Internet nötig</dt><dd id="f-netz">Ja, für jedes Diktat<small>rund 0,2 MB pro Minute Sprache</small></dd></div>
+        </dl>
+      </div>
+      <figure class="diagramm reveal">
+        <svg id="ort-svg" viewBox="0 0 720 390" role="img" aria-labelledby="ort-svg-titel">
+          <title id="ort-svg-titel">Datenfluss: Die App schickt Ton verschlüsselt zum Tonfeder-Server in Deutschland, die Erkennung läuft dort im Arbeitsspeicher, der Text geht zurück.</title>
+          <defs>
+            <marker id="pfeil-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#a3e635"/></marker>
+            <marker id="pfeil-b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#7dd3fc"/></marker>
+            <marker id="pfeil-c" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#80968a"/></marker>
+          </defs>
+          <rect class="z-rahmen" x="16" y="34" width="300" height="340" rx="14"/>
+          <text class="z-label" x="32" y="60" id="z-links">▣ Ihr Firmennetz</text>
+          <text class="z-sub" x="32" y="76" id="z-links-sub">Büro, Werkstatt, Homeoffice</text>
+          <rect class="z-rahmen" x="404" y="34" width="300" height="340" rx="14"/>
+          <text class="z-label" x="420" y="60" id="z-rechts">▣ Rechenzentrum Deutschland</text>
+          <text class="z-sub" x="420" y="76" id="z-rechts-sub">Nürnberg · docker compose</text>
+
+          <g id="g-cloud">
+            <rect class="box" x="76" y="170" width="180" height="60" rx="9"/>
+            <text class="b-label" x="166" y="196" text-anchor="middle">Tonfeder-App</text>
+            <text class="b-sub" x="166" y="214" text-anchor="middle">auf jedem Rechner</text>
+            <rect class="box" x="464" y="110" width="180" height="60" rx="9"/>
+            <text class="b-label" x="554" y="136" text-anchor="middle">Tonfeder-Server</text>
+            <text class="b-sub" x="554" y="154" text-anchor="middle">Firma · Wörterbuch</text>
+            <rect class="box akzent" x="464" y="260" width="180" height="60" rx="9"/>
+            <text class="b-label" x="554" y="286" text-anchor="middle">Erkennung</text>
+            <text class="b-sub" x="554" y="304" text-anchor="middle">GPU · nur im RAM</text>
+            <path id="c-a" class="weg" d="M256 186 C 350 186 370 126 462 126" marker-end="url(#pfeil-a)"/>
+            <path id="c-b" class="weg" d="M544 170 L544 258" marker-end="url(#pfeil-a)"/>
+            <path id="c-c" class="weg zurueck" d="M564 260 L564 172" marker-end="url(#pfeil-b)"/>
+            <path id="c-d" class="weg zurueck" d="M464 156 C 372 156 352 214 258 214" marker-end="url(#pfeil-b)"/>
+            <text class="w-label" x="314" y="148">Ton · TLS →</text>
+            <text class="w-label zurueck" x="300" y="246">← Text</text>
+          </g>
+
+          <g id="g-lokal" display="none">
+            <rect class="box" x="76" y="104" width="180" height="60" rx="9"/>
+            <text class="b-label" x="166" y="130" text-anchor="middle">Tonfeder-App</text>
+            <text class="b-sub" x="166" y="148" text-anchor="middle">auf jedem Rechner</text>
+            <rect class="box akzent" x="76" y="270" width="180" height="60" rx="9"/>
+            <text class="b-label" x="166" y="296" text-anchor="middle" id="lokal-titel">Tonfeder-Server</text>
+            <text class="b-sub" x="166" y="314" text-anchor="middle" id="lokal-sub">+ Erkennung · Container</text>
+            <rect class="box" x="464" y="190" width="180" height="60" rx="9"/>
+            <text class="b-label" x="554" y="216" text-anchor="middle">Verwaltung</text>
+            <text class="b-sub" x="554" y="234" text-anchor="middle">Portal · Updates</text>
+            <path id="l-a" class="weg" d="M150 164 L150 268" marker-end="url(#pfeil-a)"/>
+            <path id="l-b" class="weg zurueck" d="M182 270 L182 166" marker-end="url(#pfeil-b)"/>
+            <path id="l-c" class="weg leicht" d="M256 300 C 360 300 372 220 462 220" marker-end="url(#pfeil-c)"/>
+            <text class="w-label" x="92" y="222">Ton ↓</text>
+            <text class="w-label zurueck" x="192" y="222">Text ↑</text>
+            <text class="w-label leicht" x="284" y="324">nur Zähler &amp; Updates</text>
+          </g>
+
+          <circle id="paket" class="paket" r="5" cx="-20" cy="-20"/>
+          <text id="paket-label" class="paket-label" x="-40" y="-40">Ton</text>
+        </svg>
+        <figcaption>Schema ohne Ports und Hostnamen. Grün: Ton, Blau: Text.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- IT -->
+  <section class="abschnitt" id="it" aria-labelledby="h-it" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder deploy</p>
+        <h2 id="h-it">Ihre IT verteilt es wie <span class="hl">jede andere Software.</span></h2>
+        <p class="sub">Keine Benutzerkonten, keine Passwörter, ein Portal für alle Einstellungen.</p>
+      </div>
+      <div class="it">
+        <ul class="features">
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H4z"/><path d="M8 20h8M12 16v4"/><path d="M9 10l2 2 4-4"/></svg><h3>MSI für Intune und GPO</h3><p>Stilles Setup mit Firmenschlüssel. Danach ist jeder Rechner verbunden.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/><path d="M3 3l18 18"/></svg><h3>Ohne Benutzerkonten</h3><p>Jedes Gerät bekommt einen eigenen Zugang. Ein Klick im Portal sperrt ihn.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10"/><path d="M8 10h3M13 10h3"/></svg><h3>Terminalserver und Citrix</h3><p>Diktieren in Remote-Sitzungen. Lokal am Client oder im Terminalserver selbst.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/></svg><h3>Admin-Portal zum Selbermachen</h3><p>Wörterbuch, Geräte, Datenstandort und Tasten stellen Sie selbst ein.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg><h3>Updates in Ihrem Takt</h3><p>Version pro Firma festlegen und erst an eine Testgruppe ausrollen.</p></li>
+          <li class="feature spot reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><h3>Nutzung ohne Personenbezug</h3><p>Zahlen je Firma, nie je Person. Keine Inhalte, keine Namen, keine IP-Adressen.</p></li>
+        </ul>
+        <div class="terminal reveal" aria-label="Beispiel-Terminal">
+          <div class="term-bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <div class="term-tabs" role="tablist" aria-label="Verteilweg">
+              <button class="term-tab" role="tab" id="tt-intune" aria-controls="term-body" aria-selected="true" data-skript="intune">intune</button>
+              <button class="term-tab" role="tab" id="tt-gpo" aria-controls="term-body" aria-selected="false" tabindex="-1" data-skript="gpo">gpo</button>
+              <button class="term-tab" role="tab" id="tt-link" aria-controls="term-body" aria-selected="false" tabindex="-1" data-skript="link">firmen-link</button>
+            </div>
+          </div>
+          <div class="term-body" id="term-body" role="tabpanel" aria-labelledby="tt-intune" aria-live="off">
+            <div class="z"><span class="t-prompt">PS&gt; </span>msiexec /i Tonfeder.msi FIRMA=tfk_halbach_K7Q2… /qn</div>
+            <div class="z t-ok">✓ installiert für alle Benutzer dieses Rechners</div>
+            <div class="z t-ok">✓ Richtlinie gesetzt: HKLM\SOFTWARE\Policies\Tonfeder</div>
+            <div class="z t-ok">✓ Gerät NB-SERVICE-11 angemeldet · Halbach Kältetechnik</div>
+            <div class="z t-info">→ Bereit. Rechte Strg halten und sprechen.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTAL -->
+  <section class="abschnitt" id="portal" aria-labelledby="h-portal" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>open portal.tonfeder.de</p>
+        <h2 id="h-portal">Ein Portal. Alles im Blick, <span class="hl">niemand überwacht.</span></h2>
+        <p class="sub">Geräte, Wörterbuch und Nutzung je Firma. Probieren Sie die Reiter aus, die Daten sind erfunden.</p>
+      </div>
+      <div class="browser reveal">
+        <div class="browser-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="url">portal.tonfeder.de/halbach</span><span class="badge" style="--c:var(--idea)">Beispieldaten</span></div>
+        <div class="portal">
+          <div class="portal-nav" role="tablist" aria-label="Bereiche im Portal" aria-orientation="vertical">
+            <div class="portal-firma">Halbach Kältetechnik<small>61 Geräte · Cloud DE</small></div>
+            <button role="tab" id="pn-0" aria-controls="pp-0" aria-selected="true">Übersicht</button>
+            <button role="tab" id="pn-1" aria-controls="pp-1" aria-selected="false" tabindex="-1">Geräte</button>
+            <button role="tab" id="pn-2" aria-controls="pp-2" aria-selected="false" tabindex="-1">Wörterbuch</button>
+          </div>
+          <div class="portal-main">
+            <div role="tabpanel" id="pp-0" aria-labelledby="pn-0">
+              <h3>Oktober 2026</h3>
+              <div class="kpis">
+                <div class="kpi"><b data-ziel="61">61</b><span>Geräte angemeldet</span></div>
+                <div class="kpi"><b data-ziel="44">44</b><span>heute aktiv</span></div>
+                <div class="kpi"><b data-ziel="2310">2.310</b><span>Minuten diktiert</span></div>
+              </div>
+              <div class="chart" role="img" aria-label="Aktive Geräte pro Tag vom 3. bis 16. Oktober: werktags zwischen 37 und 45, am Wochenende unter 5.">
+                <div class="chart-y" aria-hidden="true"><span>50</span><span>25</span><span>0</span></div>
+                <div class="chart-f" aria-hidden="true">
+                  <i style="--h:6%;--d:0"></i><i style="--h:2%;--d:1"></i><i style="--h:80%;--d:2"></i><i style="--h:84%;--d:3"></i><i style="--h:82%;--d:4"></i><i style="--h:86%;--d:5"></i><i style="--h:74%;--d:6"></i><i style="--h:8%;--d:7"></i><i style="--h:4%;--d:8"></i><i style="--h:82%;--d:9"></i><i style="--h:86%;--d:10"></i><i style="--h:88%;--d:11"></i><i style="--h:90%;--d:12"></i><i class="heute" style="--h:88%;--d:13"></i>
+                </div>
+                <div class="chart-x" aria-hidden="true"><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span></div>
+              </div>
+              <p class="notiz">Aktive Geräte pro Tag. Ausgewertet je Firma und erst ab fünf Geräten.</p>
+            </div>
+            <div role="tabpanel" id="pp-1" aria-labelledby="pn-1" hidden>
+              <h3>Geräte</h3>
+              <div class="tabelle">
+                <table>
+                  <thead><tr><th>Gerät</th><th>System</th><th>Version</th><th>Zuletzt gesehen</th><th class="rechts">Zugang</th></tr></thead>
+                  <tbody>
+                    <tr><td class="mono">NB-VERTRIEB-04</td><td>Windows 11</td><td class="mono">1.4.2</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>heute</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                    <tr><td class="mono">NB-SERVICE-11</td><td>Windows 11</td><td class="mono">1.4.2</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>heute</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                    <tr><td class="mono">TS-CITRIX-02</td><td>Terminalserver</td><td class="mono">1.4.2</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>heute</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                    <tr><td class="mono">MBP-GF-01</td><td>macOS 15</td><td class="mono">1.4.1</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>gestern</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                    <tr><td class="mono">NB-LAGER-07</td><td>Windows 10</td><td class="mono">1.3.9</td><td><span class="badge" style="--c:var(--progress)">◐ Update offen</span></td><td class="rechts"><button class="mini sperren" type="button">Sperren</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div role="tabpanel" id="pp-2" aria-labelledby="pn-2" hidden>
+              <h3>Wörterbuch</h3>
+              <div class="tabelle">
+                <table>
+                  <thead><tr><th>Begriff</th><th>Gilt für</th><th>Status</th><th class="rechts">Aktion</th></tr></thead>
+                  <tbody>
+                    <tr><td><b>FrostLine 300</b></td><td>ganze Firma</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>aktiv</span></td><td class="rechts"><button class="mini" type="button">Bearbeiten</button></td></tr>
+                    <tr><td><b>Frau Jäschke</b></td><td>ganze Firma</td><td><span class="badge"><svg aria-hidden="true"><use href="#haken"/></svg>aktiv</span></td><td class="rechts"><button class="mini" type="button">Bearbeiten</button></td></tr>
+                    <tr><td><b>Kälteanlage Nord</b></td><td>Vorschlag von NB-SERVICE-11</td><td><span class="badge" style="--c:var(--progress)">◐ wartet</span></td><td class="rechts"><button class="mini primaer freigeben" type="button">Für alle freigeben</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WÖRTERBUCH -->
+  <section class="abschnitt" id="woerterbuch" aria-labelledby="h-wb" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder wörterbuch --test</p>
+        <h2 id="h-wb">Fachbegriffe, die <span class="hl">beim ersten Mal</span> stimmen.</h2>
+        <p class="sub">Die Erkennung hört „frost lein“, Ihr Produkt heißt „FrostLine“. Tonfeder vergleicht, wie Wörter klingen, und korrigiert nach jeder Erkennung. Probieren Sie es aus.</p>
+      </div>
+      <div class="wb">
+        <div class="wb-links reveal">
+          <div class="feld">
+            <label for="wb-in">Was die Erkennung verstanden hat</label>
+            <input class="gross" id="wb-in" type="text" value="frost lein dreihundert" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="chips" aria-label="Beispiele">
+            <button class="chip-btn" type="button">frost lein dreihundert</button>
+            <button class="chip-btn" type="button">frau jeschke ruft zurück</button>
+            <button class="chip-btn" type="button">filter trockner getauscht</button>
+            <button class="chip-btn" type="button">fau de i zwanzig fünfunddreißig</button>
+            <button class="chip-btn" type="button">neue luft wasser wärme pumpe</button>
+          </div>
+          <div class="feld">
+            <label for="wb-neu">Eigenen Begriff ergänzen <small>(nur in diesem Browser)</small></label>
+            <div class="reihe-add"><input id="wb-neu" type="text" placeholder="z. B. Ihren Firmennamen" autocomplete="off"><button class="btn btn-ghost" id="wb-add" type="button">Hinzufügen</button></div>
+          </div>
+          <ul class="begriffe" id="wb-liste" aria-label="Aktive Begriffe"></ul>
+        </div>
+        <div class="ausgabe reveal" aria-live="polite">
+          <div class="ausgabe-log" id="wb-log"><div class="z t-dim">Tippen Sie links etwas ein.</div></div>
+          <div class="ergebnis"><span class="ergebnis-label">Eingefügt wird</span><span id="wb-out">FrostLine 300</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREISE -->
+  <section class="abschnitt" id="preise" aria-labelledby="h-preise" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder preis --personen <span id="kicker-n">40</span></p>
+        <h2 id="h-preise">Preise, die <span class="hl">auf der Website stehen.</span></h2>
+        <p class="sub">Pro Person und Monat, monatlich kündbar. Der Pilot ist 30 Tage kostenlos.</p>
+      </div>
+      <div class="rechner reveal">
+        <div class="regler-zeile">
+          <label for="personen">Wie viele Personen diktieren?</label>
+          <output class="regler-zahl" id="personen-zahl" for="personen">40</output>
+          <input id="personen" type="range" min="5" max="500" step="5" value="40">
+        </div>
+        <div class="plaene">
+          <article class="plan" id="plan-team">
+            <div class="plan-kopf"><span class="plan-name">Team</span><span class="plan-preis">9 € / Person</span></div>
+            <div class="plan-summe"><b id="sum-team">360 €</b><span id="sum-team-txt">pro Monat für 40 Personen</span></div>
+            <ul><li>Cloud Deutschland</li><li>Firmenwörterbuch</li><li>Admin-Portal</li><li>Installation per Firmen-Link</li></ul>
+            <a class="btn btn-ghost" href="#pilot">Pilot starten</a>
+          </article>
+          <article class="plan empfohlen" id="plan-business">
+            <div class="plan-kopf"><span class="plan-name">Business</span><span class="plan-preis">13 € / Person</span></div>
+            <div class="plan-summe"><b id="sum-business">520 €</b><span id="sum-business-txt">pro Monat für 40 Personen</span></div>
+            <ul><li>Alles aus Team</li><li>MSI für Intune und GPO</li><li>Terminalserver und Citrix</li><li>Branchenpakete, Testgruppen</li></ul>
+            <a class="btn btn-accent" href="#pilot">Pilot starten</a>
+          </article>
+          <article class="plan aus" id="plan-onprem">
+            <div class="plan-kopf"><span class="plan-name">On-Premise</span><span class="plan-preis">ab 50 Personen</span></div>
+            <div class="plan-summe"><b>Angebot</b><span id="sum-onprem-txt">ab 50 Personen</span></div>
+            <ul><li>Ihr Rechenzentrum oder Tonfeder Box</li><li>Kein Ton ins Internet</li><li>Wartung und Updates durch uns</li></ul>
+            <a class="btn btn-ghost" href="#pilot">Angebot anfragen</a>
+          </article>
+        </div>
+        <p class="preis-fuss">Alle Preise netto zzgl. MwSt. Beispielrechnung, Stand Planung.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABLAUF -->
+  <section class="abschnitt" id="start" aria-labelledby="h-start" style="padding-top:0">
+    <div class="wrap">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>tonfeder pilot --start</p>
+        <h2 id="h-start">Vom ersten Gespräch zum Pilot <span class="hl">in drei Tagen.</span></h2>
+      </div>
+      <ol class="ablauf reveal">
+        <li><span class="wann">Tag 1</span><h3>Gespräch</h3><p>30 Minuten zu Teamgröße, Datenstandort und den Fragen Ihres Datenschutzes.</p></li>
+        <li><span class="wann">Tag 2</span><h3>Einrichtung</h3><p>Wir legen Ihre Firma an, Sie unterschreiben den Vertrag zur Auftragsverarbeitung.</p></li>
+        <li><span class="wann">Tag 3</span><h3>Verteilung</h3><p>Ihre IT verteilt das MSI oder schickt den Firmen-Link an das Pilotteam.</p></li>
+        <li><span class="wann">Woche 4</span><h3>Entscheidung</h3><p>Im Portal sehen Sie, wie viele wirklich diktieren. Dann entscheiden Sie.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="abschnitt" id="fragen" aria-labelledby="h-faq" style="padding-top:0">
+    <div class="wrap faq">
+      <div class="kopfzeile reveal">
+        <p class="kicker"><span aria-hidden="true">$ </span>man tonfeder</p>
+        <h2 id="h-faq">Was IT und Datenschutz meistens fragen.</h2>
+      </div>
+      <div class="faq-liste reveal">
+        <details open><summary>Brauchen die Mitarbeitenden ein Konto?</summary><p>Nein. Das Gerät meldet sich mit dem Firmenschlüssel an. Es gibt keine Passwörter und nichts einzustellen.</p></details>
+        <details><summary>Läuft Tonfeder in Citrix und auf Terminalservern?</summary><p>Ja. Die App läuft entweder auf dem Client und schreibt in die Remote-Sitzung, oder sie läuft im Terminalserver und nutzt die Audio-Umleitung.</p></details>
+        <details><summary>Was passiert ohne Internet?</summary><p>Mit Cloud DE braucht jedes Diktat eine Verbindung. Mit Tonfeder Box oder im eigenen Rechenzentrum reicht Ihr Firmennetz.</p></details>
+        <details><summary>Braucht der Betriebsrat zuzustimmen?</summary><p>Fragen Sie ihn trotzdem. Tonfeder zeigt keine Zahlen pro Person, und Sie bekommen eine Betriebsrats-Info und eine Mustervereinbarung.</p></details>
+        <details><summary>Wie lang darf ein Diktat sein?</summary><p>Bis 15 Minuten am Stück. Die Anzeige warnt eine Minute vor dem Ende.</p></details>
+        <details><summary>Gibt es Tonfeder für das Smartphone?</summary><p>Zuerst kommen Windows und macOS. Apps für Android und iOS sind geplant.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILOT -->
+  <section class="abschnitt pilot" id="pilot" aria-labelledby="h-pilot">
+    <div class="hero-bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div></div>
+    <div class="wrap pilot-in">
+      <div class="reveal">
+        <div class="kopfzeile">
+          <p class="kicker"><span aria-hidden="true">$ </span>tonfeder pilot --anfragen</p>
+          <h2 id="h-pilot">Testen Sie Tonfeder <span class="hl">30 Tage</span> mit Ihrem Team.</h2>
+          <p class="sub">Kostenlos und ohne Verpflichtung. Danach entscheiden Sie anhand echter Nutzungszahlen.</p>
+        </div>
+        <ol class="danach">
+          <li>Wir melden uns innerhalb eines Werktags persönlich.</li>
+          <li>Sie bekommen Vertrag, TOM und die Vorlage für die Folgenabschätzung.</li>
+          <li>Ihre IT bekommt den Firmenschlüssel und das MSI.</li>
+        </ol>
+        <p class="kontakt">Lieber direkt? <b>pilot@tonfeder.example</b></p>
+      </div>
+      <form class="formular reveal" id="anfrage" method="post" action="/api/leads" novalidate>
+        <div class="reihe">
+          <div class="feld"><label for="f-firma">Firma</label><input id="f-firma" name="firma" autocomplete="organization" aria-describedby="e-firma"><span class="fehler-text" id="e-firma"></span></div>
+          <div class="feld"><label for="f-name">Ihr Name</label><input id="f-name" name="name" autocomplete="name" aria-describedby="e-name"><span class="fehler-text" id="e-name"></span></div>
+        </div>
+        <div class="reihe">
+          <div class="feld"><label for="f-mail">E-Mail <small>(dienstlich)</small></label><input id="f-mail" name="email" type="email" autocomplete="email" aria-describedby="e-mail"><span class="fehler-text" id="e-mail"></span></div>
+          <div class="feld"><label for="f-tel">Telefon <small>(optional)</small></label><input id="f-tel" name="telefon" type="tel" autocomplete="tel"></div>
+        </div>
+        <div class="reihe">
+          <div class="feld"><label for="f-groesse">Wie viele Personen?</label><select id="f-groesse" name="groesse"><option>5 bis 25</option><option>25 bis 100</option><option>100 bis 500</option><option>über 500</option></select></div>
+          <div class="feld"><label for="f-ort">Datenstandort</label><select id="f-ort" name="ort"><option>Noch offen</option><option>Cloud DE</option><option>Ihr Rechenzentrum</option><option>Tonfeder Box</option></select></div>
+        </div>
+        <div class="feld"><label for="f-text">Nachricht <small>(optional)</small></label><textarea id="f-text" name="nachricht" placeholder="Zum Beispiel: 40 Personen im Außendienst, Citrix im Büro"></textarea></div>
+        <div class="honig" aria-hidden="true"><label for="f-web">Website</label><input id="f-web" name="website" tabindex="-1" autocomplete="off"></div>
+        <label class="einw" for="f-einw"><input id="f-einw" name="einwilligung" type="checkbox" aria-describedby="e-einw"><span>Ich bin einverstanden, dass meine Angaben gespeichert werden, um die Anfrage zu bearbeiten. Gelöscht wird nach spätestens 180 Tagen.</span></label>
+        <span class="fehler-text" id="e-einw"></span>
+        <button class="btn btn-accent" type="submit">Pilot anfragen <span class="pfeil" aria-hidden="true">→</span></button>
+        <p class="meldung" id="f-meldung" role="status"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="fuss">
+  <div class="wrap fuss-in">
+    <a class="marke" href="#top"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span><span class="tilde" aria-hidden="true">~/</span>tonfeder</span></a>
+    <nav aria-label="Rechtliches"><span>Impressum (folgt)</span><span>Datenschutz (folgt)</span><a href="#fragen">Fragen</a></nav>
+    <span class="mono">ohne Tracking · Fotos: Unsplash · Designentwurf, Oktober 2026</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var ruhig = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var beiSicht = function (el, cb, schwelle) {
+    if (!el) return;
+    if (!('IntersectionObserver' in window)) { cb(true, null); return; }
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { cb(e.isIntersecting, io); }); }, { threshold: schwelle == null ? 0.35 : schwelle });
+    io.observe(el);
+  };
+  var komma = function (ms) { return (ms / 1000).toFixed(1).replace('.', ',') + ' s'; };
+
+  // ---------- Mobiles Menü ----------
+  var burger = $('.burger'), mnav = $('#mnav');
+  if (burger && mnav) {
+    var menu = function (auf) { mnav.hidden = !auf; burger.setAttribute('aria-expanded', auf ? 'true' : 'false'); burger.querySelector('.sr').textContent = auf ? 'Menü schließen' : 'Menü öffnen'; };
+    burger.addEventListener('click', function () { menu(mnav.hidden); });
+    $$('a', mnav).forEach(function (a) { a.addEventListener('click', function () { menu(false); }); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !mnav.hidden) { menu(false); burger.focus(); } });
+  }
+
+  // ---------- Spotlight auf Karten ----------
+  $$('.spot').forEach(function (el) {
+    el.addEventListener('pointermove', function (e) {
+      var r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  // ---------- Pille (Overlay der App) ----------
+  var pille = function (el) {
+    return function (z, text, zeit) {
+      el.setAttribute('data-z', z);
+      el.querySelector('.pill-text').textContent = text;
+      el.querySelector('.pill-zeit').textContent = zeit || '';
+    };
+  };
+
+  // ---------- Hero-Demo: gedrückt halten, „sprechen“, loslassen ----------
+  (function () {
+    var demo = $('#demo'); if (!demo) return;
+    var text = $('#demo-text'), knopf = $('#hold'), hinweis = $('#hold-hint'), neu = $('#demo-neu');
+    var setze = pille($('#demo-pill'));
+    var canvas = $('.wave', demo), ctx = canvas.getContext('2d');
+    var saetze = [
+      'die Messwerte der Lüftungsanlage in Halle 3 liegen vor. Alle Werte liegen im Rahmen der DIN EN 16798.',
+      'Das vollständige Protokoll schicke ich Ihnen bis Mittwoch, 12 Uhr.',
+      'Bei Fragen erreichen Sie mich jederzeit unter der bekannten Nummer.'
+    ];
+    var idx = 1, zustand = 'bereit', t0 = 0, uhr = 0, auto = !ruhig;
+    var caret = $('.caret', text);
+
+    var hinweisSetzen = function () {
+      hinweis.textContent = idx < saetze.length
+        ? 'Satz ' + (idx + 1) + ' von ' + saetze.length + ' · Maus, Finger, Leertaste oder rechte Strg-Taste'
+        : 'E-Mail fertig diktiert.';
+    };
+
+    // Wellenform
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var welle = { an: false, werte: [], aktuell: 0, ziel: 0, silbe: 0, raf: 0, letzt: 0 };
+    for (var i = 0; i < 56; i++) welle.werte.push(0.05);
+    var zeichne = function () {
+      var w = canvas.width, h = canvas.height, n = welle.werte.length;
+      ctx.clearRect(0, 0, w, h);
+      var luecke = 3 * dpr, bw = Math.max(2 * dpr, (w - luecke * (n - 1)) / n);
+      for (var k = 0; k < n; k++) {
+        var v = welle.werte[k], bh = Math.max(2 * dpr, v * h * 0.94), x = k * (bw + luecke), y = (h - bh) / 2;
+        ctx.fillStyle = welle.an ? 'rgba(163,230,53,' + (0.3 + 0.7 * (k / n)).toFixed(3) + ')' : 'rgba(168,188,171,0.32)';
+        if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, bw, bh, Math.min(bw, bh) / 2); ctx.fill(); }
+        else ctx.fillRect(x, y, bw, bh);
+      }
+    };
+    var groesse = function () {
+      var r = canvas.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.round(r.width * dpr));
+      canvas.height = Math.max(1, Math.round(r.height * dpr));
+      zeichne();
+    };
+    var schritt = function (t) {
+      welle.raf = 0;
+      if (t - welle.letzt >= 34) {
+        welle.letzt = t;
+        var v;
+        if (welle.an) {
+          welle.silbe -= 1;
+          if (welle.silbe <= 0) { welle.ziel = Math.random() < 0.18 ? 0.06 : 0.35 + Math.random() * 0.6; welle.silbe = 3 + Math.floor(Math.random() * 6); }
+          welle.aktuell += (welle.ziel - welle.aktuell) * 0.4;
+          v = Math.min(1, Math.max(0.05, welle.aktuell * (0.7 + Math.random() * 0.6)));
+        } else {
+          welle.aktuell *= 0.8;
+          v = Math.max(0.05, welle.aktuell);
+        }
+        welle.werte.push(v); welle.werte.shift();
+        zeichne();
+      }
+      var ruhe = !welle.an && welle.werte.every(function (x) { return x <= 0.06; });
+      if (!ruhe) welle.raf = requestAnimationFrame(schritt);
+      else zeichne();
+    };
+    var welleLos = function () { if (!welle.raf) welle.raf = requestAnimationFrame(schritt); };
+    if ('ResizeObserver' in window) new ResizeObserver(groesse).observe(canvas); else window.addEventListener('resize', groesse);
+    groesse();
+
+    var start = function () {
+      if (zustand !== 'bereit' || idx >= saetze.length) return;
+      zustand = 'hoert'; t0 = performance.now();
+      knopf.classList.add('an'); knopf.classList.remove('lockt'); knopf.setAttribute('aria-pressed', 'true');
+      setze('hoert', 'Hört zu', '0,0 s');
+      uhr = setInterval(function () { $('#demo-pill .pill-zeit').textContent = komma(performance.now() - t0); }, 100);
+      welle.an = true; welleLos();
+    };
+    var stopp = function () {
+      if (zustand !== 'hoert') return;
+      var dauer = performance.now() - t0;
+      clearInterval(uhr);
+      knopf.classList.remove('an'); knopf.setAttribute('aria-pressed', 'false');
+      welle.an = false; welleLos();
+      if (dauer < 400) { zustand = 'bereit'; setze('bereit', 'Etwas länger halten', ''); return; }
+      zustand = 'sendet'; setze('schreibt', 'Schreibt …', '');
+      var t1 = performance.now();
+      setTimeout(function () {
+        var p = document.createElement('p'), s = document.createElement('span');
+        s.className = 'frisch'; s.textContent = saetze[idx];
+        p.appendChild(s); p.appendChild(caret); text.appendChild(p);
+        idx++;
+        setze('fertig', 'Eingefügt', komma(performance.now() - t1));
+        zustand = idx >= saetze.length ? 'aus' : 'bereit';
+        if (zustand === 'aus') neu.hidden = false;
+        hinweisSetzen();
+      }, 700);
+    };
+    var nutzer = function () { auto = false; };
+
+    knopf.addEventListener('pointerdown', function (e) {
+      e.preventDefault(); nutzer();
+      if (knopf.setPointerCapture) { try { knopf.setPointerCapture(e.pointerId); } catch (err) {} }
+      start();
+    });
+    knopf.addEventListener('pointerup', stopp);
+    knopf.addEventListener('pointercancel', stopp);
+    knopf.addEventListener('lostpointercapture', stopp);
+    knopf.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    knopf.addEventListener('click', function (e) { e.preventDefault(); });
+    knopf.addEventListener('keydown', function (e) {
+      if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); nutzer(); start(); }
+      else if (e.key === ' ' || e.key === 'Enter') e.preventDefault();
+    });
+    knopf.addEventListener('keyup', function (e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); stopp(); } });
+    var feld = function (e) { return /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName); };
+    document.addEventListener('keydown', function (e) { if (e.code === 'ControlRight' && !e.repeat && !feld(e)) { nutzer(); start(); } });
+    document.addEventListener('keyup', function (e) { if (e.code === 'ControlRight') stopp(); });
+    window.addEventListener('blur', stopp);
+    neu.addEventListener('click', function () {
+      $$('p', text).slice(1).forEach(function (p) { p.remove(); });
+      text.firstElementChild.appendChild(caret);
+      idx = 0; zustand = 'bereit'; neu.hidden = true;
+      setze('bereit', 'Bereit', ''); hinweisSetzen(); knopf.focus();
+    });
+
+    // Startzustand: Ohne Bewegung bleibt Satz 1 stehen. Sonst führt die Seite einmal selbst vor.
+    if (auto) {
+      var vorab = $('.vorab', text); if (vorab) vorab.remove();
+      text.firstElementChild.appendChild(caret);
+      idx = 0; setze('bereit', 'Bereit', ''); hinweisSetzen();
+      beiSicht(demo, function (ja, io) {
+        if (!ja) return;
+        if (io) io.disconnect();
+        setTimeout(function () {
+          if (!auto) return;
+          start();
+          setTimeout(function () {
+            if (zustand === 'hoert') stopp();
+            setTimeout(function () { if (idx < saetze.length) { knopf.classList.add('lockt'); hinweis.textContent = 'Jetzt Sie: ' + hinweis.textContent; } }, 900);
+          }, 2300);
+        }, 900);
+      }, 0.4);
+    } else {
+      hinweisSetzen();
+    }
+  })();
+
+  // ---------- Einsatzbereiche ----------
+  (function () {
+    var tabs = $$('.p-tab'); if (!tabs.length) return;
+    var bilder = $$('.p-buehne img'), app = $('#p-app'), ptext = $('#p-text'), panel = $('#p-panel');
+    var setze = pille($('#p-pill'));
+    var daten = [
+      { app: 'Servicebericht · Auftrag 24-1187', text: 'Kältekreis geprüft, Drücke im Sollbereich. Verdampfer gereinigt und Filtertrockner getauscht. Nächste Wartung im März.', zeit: '1,9 s' },
+      { app: 'Prüfprotokoll · Gerät FL-300-0412', text: 'Sichtprüfung ohne Befund. Isolationswiderstand 2,1 Megaohm, Schutzleiter in Ordnung. Gerät freigegeben.', zeit: '1,6 s' },
+      { app: 'Wareneingang · Lieferschein 88231', text: 'Zwei Europaletten beschädigt angeliefert, Fotos im Anhang. Restliche Ware in Kommissionierzone B eingelagert.', zeit: '1,7 s' },
+      { app: 'CRM · Gesprächsnotiz Stadtwerke Lindenau', text: 'Gespräch mit Frau Okafor: Angebot für drei Standorte gewünscht, Entscheidung bis Ende November. Rückruf am Dienstag.', zeit: '2,2 s' },
+      { app: 'Neue E-Mail · An: Team Service', text: 'Hallo zusammen, die Schulung zur neuen Zeiterfassung ist am Donnerstag um 10 Uhr. Bitte tragt euch bis Mittwoch in die Liste ein.', zeit: '1,8 s' }
+    ];
+    var akt = 0, laeuft = !ruhig, sichtbar = false, uhren = [], weiter = 0;
+    var leeren = function () { uhren.forEach(clearTimeout); uhren = []; clearTimeout(weiter); };
+    var zeige = function (i, fokus) {
+      leeren(); akt = i;
+      tabs.forEach(function (t, k) {
+        var an = k === i;
+        t.setAttribute('aria-selected', an ? 'true' : 'false'); t.tabIndex = an ? 0 : -1;
+        t.querySelector('.lauf').classList.remove('an');
+      });
+      if (fokus) tabs[i].focus();
+      panel.setAttribute('aria-labelledby', tabs[i].id);
+      bilder.forEach(function (b, k) { b.classList.toggle('an', k === i); });
+      app.textContent = daten[i].app;
+      if (ruhig) { ptext.textContent = daten[i].text; setze('fertig', 'Eingefügt', daten[i].zeit); }
+      else {
+        ptext.textContent = ''; setze('hoert', 'Hört zu', '');
+        uhren.push(setTimeout(function () { setze('schreibt', 'Schreibt …', ''); }, 1300));
+        uhren.push(setTimeout(function () {
+          ptext.textContent = daten[i].text;
+          ptext.classList.remove('frisch'); void ptext.offsetWidth; ptext.classList.add('frisch');
+          setze('fertig', 'Eingefügt', daten[i].zeit);
+        }, 1800));
+      }
+      if (laeuft && sichtbar) {
+        var l = tabs[i].querySelector('.lauf'); void l.offsetWidth; l.classList.add('an');
+        weiter = setTimeout(function () { zeige((akt + 1) % tabs.length); }, 7000);
+      }
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { laeuft = false; zeige(i); });
+      t.addEventListener('keydown', function (e) {
+        var n = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+        if (n != null) { e.preventDefault(); laeuft = false; zeige(n, true); }
+      });
+    });
+    beiSicht($('.persona'), function (ja) {
+      var war = sichtbar; sichtbar = ja;
+      if (!laeuft) return;
+      if (ja && !war) { var l = tabs[akt].querySelector('.lauf'); l.classList.remove('an'); void l.offsetWidth; l.classList.add('an'); clearTimeout(weiter); weiter = setTimeout(function () { zeige((akt + 1) % tabs.length); }, 7000); }
+      if (!ja) { clearTimeout(weiter); tabs[akt].querySelector('.lauf').classList.remove('an'); }
+    }, 0.3);
+  })();
+
+  // ---------- Bildband ----------
+  (function () {
+    var band = $('.band'); if (!band) return;
+    var bilder = $$('.band-flaeche img', band), punkte = $$('.band-dots button', band);
+    var kicker = $('#band-kicker'), satz = $('#band-satz');
+    var texte = [
+      { k: 'pwd', p: '→ /rechenzentrum/nuernberg', s: 'Ihre Sprache bleibt in Deutschland.' },
+      { k: "grep -r 'diktat' /var/log", p: '→ 0 Treffer', s: 'Kein Ton auf der Platte. Kein Text in den Logs.' }
+    ];
+    var akt = 0, uhr = 0;
+    var zeige = function (i) {
+      akt = i;
+      bilder.forEach(function (b, k) {
+        b.classList.remove('links', 'rechts');
+        if (k !== i) b.classList.add(k > i ? 'links' : 'rechts');
+        b.setAttribute('aria-hidden', k === i ? 'false' : 'true');
+      });
+      punkte.forEach(function (p, k) { if (k === i) p.setAttribute('aria-current', 'true'); else p.removeAttribute('aria-current'); });
+      kicker.textContent = '';
+      var a = document.createElement('span'); a.setAttribute('aria-hidden', 'true'); a.textContent = '$ ';
+      var b = document.createElement('span'); b.textContent = texte[i].p;
+      kicker.appendChild(a); kicker.appendChild(document.createTextNode(texte[i].k + ' ')); kicker.appendChild(b);
+      satz.textContent = texte[i].s;
+    };
+    punkte.forEach(function (p, i) { p.addEventListener('click', function () { clearInterval(uhr); uhr = 0; zeige(i); }); });
+    if (!ruhig) beiSicht(band, function (ja) {
+      if (ja && !uhr) uhr = setInterval(function () { zeige((akt + 1) % bilder.length); }, 6000);
+      if (!ja && uhr) { clearInterval(uhr); uhr = 0; }
+    }, 0.3);
+  })();
+
+  // ---------- Datenstandort ----------
+  (function () {
+    var svg = $('#ort-svg'); if (!svg) return;
+    var gCloud = $('#g-cloud'), gLokal = $('#g-lokal'), dot = $('#paket'), label = $('#paket-label');
+    var fakten = {
+      cloud: [['Ja, verschlüsselt nach Nürnberg', 'und nirgendwo sonst hin'], ['Nur Dauer und Anzahl', 'Ton und Text verwerfen wir nach der Rückgabe'], ['Ja, für jedes Diktat', 'rund 0,2 MB pro Minute Sprache']],
+      rz: [['Nein', 'die Erkennung läuft in Ihrem Rechenzentrum'], ['Nur Dauer und Anzahl', 'als anonyme Zähler an die Tonfeder-Cloud'], ['Nein, Ihr Netz reicht', 'Internet nur für Lizenz und Updates']],
+      box: [['Nein', 'die Box steht in Ihrem Serverschrank'], ['Nur Dauer und Anzahl', 'als anonyme Zähler an die Tonfeder-Cloud'], ['Nein, Ihr Netz reicht', 'Diktate gehen auch bei Internetausfall']]
+    };
+    var folgen = { cloud: [['c-a', 'ton'], ['c-b', 'ton'], ['c-c', 'text'], ['c-d', 'text']], lokal: [['l-a', 'ton'], ['l-b', 'text'], ['l-c', 'zaehler']] };
+    var namen = { ton: 'Ton', text: 'Text', zaehler: 'Zähler' };
+    var folge = folgen.cloud, si = 0, sStart = 0, raf = 0, sichtbar = false;
+    var dd = function (id, w) { var el = document.getElementById(id), sm = document.createElement('small'); el.textContent = w[0]; sm.textContent = w[1]; el.appendChild(sm); };
+    var tick = function (t) {
+      raf = 0;
+      if (!sStart) sStart = t;
+      var schritt = folge[si], pfad = document.getElementById(schritt[0]), art = schritt[1];
+      var dauer = art === 'zaehler' ? 1700 : 1050;
+      var p = Math.max(0, Math.min(1, (t - sStart) / dauer));
+      var e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      var pt = pfad.getPointAtLength(e * pfad.getTotalLength());
+      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); dot.setAttribute('class', 'paket ' + art);
+      label.setAttribute('x', pt.x + 9); label.setAttribute('y', pt.y - 9); label.setAttribute('class', 'paket-label ' + art); label.textContent = namen[art];
+      if (p >= 1) { si = (si + 1) % folge.length; sStart = t + (si === 0 ? 700 : 150); }
+      if (sichtbar) raf = requestAnimationFrame(tick);
+    };
+    var setzeOrt = function (o) {
+      $$('[data-ort]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-ort') === o ? 'true' : 'false'); });
+      var lokal = o !== 'cloud';
+      if (lokal) { gCloud.setAttribute('display', 'none'); gLokal.removeAttribute('display'); }
+      else { gLokal.setAttribute('display', 'none'); gCloud.removeAttribute('display'); }
+      $('#z-links').textContent = o === 'rz' ? '▣ Ihr Rechenzentrum' : '▣ Ihr Firmennetz';
+      $('#z-links-sub').textContent = o === 'rz' ? 'Firmennetz und eigene Server' : (o === 'box' ? 'Büro, Werkstatt, Serverschrank' : 'Büro, Werkstatt, Homeoffice');
+      $('#z-rechts').textContent = lokal ? '▣ Tonfeder-Cloud' : '▣ Rechenzentrum Deutschland';
+      $('#z-rechts-sub').textContent = lokal ? 'nur Verwaltung, kein Ton' : 'Nürnberg · docker compose';
+      $('#lokal-titel').textContent = o === 'box' ? 'Tonfeder Box' : 'Tonfeder-Server';
+      $('#lokal-sub').textContent = o === 'box' ? 'Erkennung im Serverschrank' : '+ Erkennung · Container';
+      dd('f-ton', fakten[o][0]); dd('f-speicher', fakten[o][1]); dd('f-netz', fakten[o][2]);
+      folge = lokal ? folgen.lokal : folgen.cloud; si = 0; sStart = 0;
+    };
+    $$('[data-ort]').forEach(function (b) { b.addEventListener('click', function () { setzeOrt(b.getAttribute('data-ort')); }); });
+    if (!ruhig) beiSicht(svg, function (ja) {
+      sichtbar = ja;
+      if (ja && !raf) { sStart = 0; raf = requestAnimationFrame(tick); }
+    }, 0.2);
+  })();
+
+  // ---------- Terminal ----------
+  (function () {
+    var body = $('#term-body'); if (!body) return;
+    var tabs = $$('.term-tab');
+    var skripte = {
+      intune: [
+        ['cmd', 'PS> ', 'msiexec /i Tonfeder.msi FIRMA=tfk_halbach_K7Q2… /qn'],
+        ['t-ok', '✓ installiert für alle Benutzer dieses Rechners'],
+        ['t-ok', '✓ Richtlinie gesetzt: HKLM\\SOFTWARE\\Policies\\Tonfeder'],
+        ['t-ok', '✓ Gerät NB-SERVICE-11 angemeldet · Halbach Kältetechnik'],
+        ['t-info', '→ Bereit. Rechte Strg halten und sprechen.']
+      ],
+      gpo: [
+        ['cmd', 'PS> ', 'New-GPO -Name "Tonfeder" | New-GPLink -Target "OU=Service,DC=halbach,DC=local"'],
+        ['cmd', 'PS> ', 'Set-GPRegistryValue -Name "Tonfeder" -Key "HKLM\\SOFTWARE\\Policies\\Tonfeder" -ValueName EnrollKey -Type String -Value "tfk_halbach_K7Q2…"'],
+        ['t-ok', '✓ Gruppenrichtlinie verknüpft mit OU Service'],
+        ['t-dim', '  61 Rechner übernehmen sie beim nächsten Neustart'],
+        ['t-info', '→ Kein Besuch am Arbeitsplatz nötig.']
+      ],
+      link: [
+        ['cmd', '$ ', 'open https://get.tonfeder.de/halbach'],
+        ['t-dim', '↓ Tonfeder-Setup_halbach.exe · signiert · ohne Adminrechte'],
+        ['t-ok', '✓ installiert in %LOCALAPPDATA%\\Tonfeder'],
+        ['t-ok', '✓ mit Halbach Kältetechnik verbunden'],
+        ['t-info', '→ Kein Konto, kein Passwort, keine Einstellungen.']
+      ]
+    };
+    var lauf = 0;
+    var warte = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+    var zeile = function (z) {
+      var d = document.createElement('div'); d.className = 'z';
+      if (z[0] === 'cmd') { var p = document.createElement('span'); p.className = 't-prompt'; p.textContent = z[1]; d.appendChild(p); d.appendChild(document.createTextNode(z[2])); }
+      else { d.className += ' ' + z[0]; d.textContent = z[1]; }
+      return d;
+    };
+    var zeigeSofort = function (key) { body.textContent = ''; skripte[key].forEach(function (z) { body.appendChild(zeile(z)); }); };
+    var spiele = function (key) {
+      if (ruhig) { zeigeSofort(key); return; }
+      var meinLauf = ++lauf;
+      body.textContent = '';
+      (async function () {
+        for (var n = 0; n < skripte[key].length; n++) {
+          var z = skripte[key][n];
+          if (meinLauf !== lauf) return;
+          if (z[0] === 'cmd') {
+            var d = document.createElement('div'); d.className = 'z';
+            var p = document.createElement('span'); p.className = 't-prompt'; p.textContent = z[1];
+            var t = document.createTextNode(''), c = document.createElement('span'); c.className = 'caret';
+            d.appendChild(p); d.appendChild(t); d.appendChild(c); body.appendChild(d);
+            for (var k = 1; k <= z[2].length; k++) { if (meinLauf !== lauf) return; t.textContent = z[2].slice(0, k); await warte(z[2].length > 60 ? 9 : 22); }
+            await warte(280); c.remove();
+          } else { await warte(320); if (meinLauf !== lauf) return; body.appendChild(zeile(z)); }
+        }
+      })();
+    };
+    var waehle = function (tab, fokus) {
+      tabs.forEach(function (t) { var an = t === tab; t.setAttribute('aria-selected', an ? 'true' : 'false'); t.tabIndex = an ? 0 : -1; });
+      body.setAttribute('aria-labelledby', tab.id);
+      if (fokus) tab.focus();
+      spiele(tab.getAttribute('data-skript'));
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { waehle(t); });
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); waehle(tabs[(i + 1) % tabs.length], true); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); waehle(tabs[(i - 1 + tabs.length) % tabs.length], true); }
+      });
+    });
+    if (!ruhig) beiSicht(body, function (ja, io) { if (ja) { if (io) io.disconnect(); spiele('intune'); } }, 0.5);
+  })();
+
+  // ---------- Portal ----------
+  (function () {
+    var tabs = $$('.portal-nav [role="tab"]'); if (!tabs.length) return;
+    var waehle = function (tab, fokus) {
+      tabs.forEach(function (t) {
+        var an = t === tab;
+        t.setAttribute('aria-selected', an ? 'true' : 'false'); t.tabIndex = an ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !an;
+      });
+      if (fokus) tab.focus();
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { waehle(t); });
+      t.addEventListener('keydown', function (e) {
+        var n = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+        if (n != null) { e.preventDefault(); waehle(tabs[n], true); }
+      });
+    });
+    $$('.sperren').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var zelle = b.closest('tr').children[3], badge = zelle.querySelector('.badge');
+        if (b.textContent === 'Sperren') {
+          b.dataset.alt = badge.outerHTML;
+          badge.style.setProperty('--c', 'var(--danger)'); badge.textContent = '✕ gesperrt';
+          b.textContent = 'Entsperren';
+        } else { zelle.innerHTML = b.dataset.alt; b.textContent = 'Sperren'; }
+      });
+    });
+    $$('.freigeben').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var tr = b.closest('tr');
+        tr.children[1].textContent = 'ganze Firma';
+        var badge = tr.querySelector('.badge'); badge.style.removeProperty('--c'); badge.textContent = '✓ aktiv';
+        b.className = 'mini'; b.textContent = 'Bearbeiten';
+      });
+    });
+    if (!ruhig) beiSicht($('.portal'), function (ja, io) {
+      if (!ja) return; if (io) io.disconnect();
+      $('.chart-f').classList.add('wachsen');
+      $$('.kpi b[data-ziel]').forEach(function (el) {
+        var ziel = +el.getAttribute('data-ziel'), t0 = performance.now();
+        requestAnimationFrame(function zaehlen(t) {
+          var p = Math.min(1, (t - t0) / 1200);
+          el.textContent = Math.round(ziel * (1 - Math.pow(1 - p, 3))).toLocaleString('de-DE');
+          if (p < 1) requestAnimationFrame(zaehlen);
+        });
+      });
+    }, 0.35);
+  })();
+
+  // ---------- Wörterbuch-Spielwiese (Kölner Phonetik) ----------
+  (function () {
+    var ein = $('#wb-in'); if (!ein) return;
+    var log = $('#wb-log'), out = $('#wb-out'), liste = $('#wb-liste'), neu = $('#wb-neu');
+    var begriffe = [
+      { w: 'FrostLine 300', q: 'Firma' }, { w: 'Frau Jäschke', q: 'Firma' }, { w: 'Halbach', q: 'Firma' },
+      { w: 'Filtertrockner', q: 'Paket' }, { w: 'Luft-Wasser-Wärmepumpe', q: 'Paket' }, { w: 'Europalette', q: 'Paket' }, { w: 'Kommissionierzone', q: 'Paket' }
+    ];
+    var zuordnungen = [
+      { s: 'fau de i zwanzig fünfunddreißig', w: 'VDI 2035' },
+      { s: 'r zwei neunzig', w: 'R-290' }
+    ];
+    var stopp = ['der', 'die', 'das', 'und', 'ist', 'im', 'in', 'mit', 'nach', 'auf', 'neue', 'neuer', 'neu', 'ruft', 'zurück', 'getauscht', 'ein', 'eine'];
+    var hat = function (menge, z) { return z !== '' && menge.indexOf(z) >= 0; };
+    var koelner = function (wort) {
+      var s = wort.toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 's').replace(/[^a-z]/g, '');
+      var roh = '';
+      for (var i = 0; i < s.length; i++) {
+        var c = s[i], vor = i > 0 ? s[i - 1] : '', nach = i < s.length - 1 ? s[i + 1] : '', k = '';
+        if ('aeijouy'.indexOf(c) >= 0) k = '0';
+        else if (c === 'h') k = '';
+        else if (c === 'b') k = '1';
+        else if (c === 'p') k = nach === 'h' ? '3' : '1';
+        else if (c === 'd' || c === 't') k = hat('csz', nach) ? '8' : '2';
+        else if ('fvw'.indexOf(c) >= 0) k = '3';
+        else if ('gkq'.indexOf(c) >= 0) k = '4';
+        else if (c === 'c') {
+          if (i === 0) k = hat('ahkloqrux', nach) ? '4' : '8';
+          else k = hat('sz', vor) ? '8' : (hat('ahkoqux', nach) ? '4' : '8');
+        }
+        else if (c === 'x') k = hat('ckq', vor) ? '8' : '48';
+        else if (c === 'l') k = '5';
+        else if (c === 'm' || c === 'n') k = '6';
+        else if (c === 'r') k = '7';
+        else if (c === 's' || c === 'z') k = '8';
+        roh += k;
+      }
+      var z = '';
+      for (var j = 0; j < roh.length; j++) if (roh[j] !== z[z.length - 1]) z += roh[j];
+      return z.charAt(0) + z.slice(1).replace(/0/g, '');
+    };
+    var lev = function (a, b) {
+      var m = a.length, n = b.length, d = [];
+      for (var i = 0; i <= m; i++) { d[i] = [i]; }
+      for (var j = 1; j <= n; j++) d[0][j] = j;
+      for (i = 1; i <= m; i++) for (j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      return d[m][n];
+    };
+    var norm = function (s) { return s.toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 's').replace(/[^a-z0-9]/g, ''); };
+    var EINER = { null: 0, eins: 1, zwei: 2, drei: 3, vier: 4, 'fünf': 5, sechs: 6, sieben: 7, acht: 8, neun: 9 };
+    var TEENS = { zehn: 10, elf: 11, 'zwölf': 12, dreizehn: 13, vierzehn: 14, 'fünfzehn': 15, sechzehn: 16, siebzehn: 17, achtzehn: 18, neunzehn: 19 };
+    var ZEHNER = { zwanzig: 20, 'dreißig': 30, vierzig: 40, 'fünfzig': 50, sechzig: 60, siebzig: 70, achtzig: 80, neunzig: 90 };
+    var hatK = function (o, k) { return Object.prototype.hasOwnProperty.call(o, k); };
+    var einer = function (s) { return s === 'ein' ? 1 : (hatK(EINER, s) ? EINER[s] : null); };
+    var unter100 = function (s) {
+      if (hatK(EINER, s)) return EINER[s]; if (hatK(TEENS, s)) return TEENS[s]; if (hatK(ZEHNER, s)) return ZEHNER[s];
+      var u = s.indexOf('und');
+      if (u > 0) { var e = einer(s.slice(0, u)), z = s.slice(u + 3); if (e && hatK(ZEHNER, z)) return ZEHNER[z] + e; }
+      return null;
+    };
+    var unter1000 = function (s) {
+      var h = s.indexOf('hundert');
+      if (h >= 0) { var v = s.slice(0, h), f = v === '' ? 1 : einer(v); if (!f) return null; var r = s.slice(h + 7); if (r === '') return f * 100; var n = unter100(r); return n == null ? null : f * 100 + n; }
+      return unter100(s);
+    };
+    var zahl = function (w) {
+      if (w === 'ein' || w === 'eine' || w === '') return null;
+      var t = w.indexOf('tausend'), summe = 0, rest = w;
+      if (t >= 0) { var v = w.slice(0, t), f = v === '' ? 1 : unter1000(v); if (!f) return null; summe = f * 1000; rest = w.slice(t + 7); if (rest === '') return summe; }
+      var r = unter1000(rest); return r == null ? null : summe + r;
+    };
+    var zerlege = function (w) { var m = w.match(/^(.*?)(?:\s+(\d[\d.,-]*))?$/); return { buch: m[1], zahl: m[2] || '' }; };
+
+    var korrigiere = function (eingabe) {
+      var zeilen = [['cmd', '$ ', 'tonfeder korrigiere "' + eingabe + '"']];
+      var toks = eingabe.trim().split(/\s+/).filter(Boolean).map(function (t) { return { t: t, fix: false }; });
+      var anzahl = 0;
+      // 1. Feste Zuordnungen
+      zuordnungen.forEach(function (z) {
+        var s = z.s.split(' ');
+        for (var i = 0; i + s.length <= toks.length; i++) {
+          var ok = true;
+          for (var k = 0; k < s.length; k++) if (toks[i + k].fix || toks[i + k].t.toLowerCase() !== s[k]) { ok = false; break; }
+          if (ok) { toks.splice(i, s.length, { t: z.w, fix: true }); anzahl++; zeilen.push(['t-info', 'zuordnung  "' + z.s + '" → ' + z.w]); }
+        }
+      });
+      // 2. Zahlwörter
+      toks.forEach(function (o) { if (o.fix) return; var n = zahl(o.t.toLowerCase()); if (n != null) { zeilen.push(['t-dim', 'zahl       ' + o.t + ' → ' + n]); o.t = String(n); o.zahl = true; } });
+      // 3. Phonetischer Abgleich
+      begriffe.forEach(function (b) {
+        var teile = zerlege(b.w), ziel = koelner(teile.buch), zn = norm(teile.buch);
+        if (ziel.length < 3 || zn.length < 5) return;
+        for (var i = 0; i < toks.length; i++) {
+          for (var n = 4; n >= 1; n--) {
+            if (i + n > toks.length) continue;
+            var fenster = toks.slice(i, i + n);
+            if (fenster.some(function (o) { return o.fix || o.zahl || stopp.indexOf(o.t.toLowerCase()) >= 0; })) continue;
+            var roh = fenster.map(function (o) { return o.t; }).join(' '), code = koelner(roh), rn = norm(roh);
+            var codeOk = code === ziel || (code.length >= 5 && ziel.length >= 5 && lev(code, ziel) <= 1);
+            var aehnl = 1 - lev(rn, zn) / Math.max(rn.length, zn.length);
+            if (!codeOk || aehnl < (ziel.length < 5 ? 0.75 : 0.6)) continue;
+            var ersetzt = teile.buch, nimm = n;
+            if (teile.zahl && toks[i + n] && toks[i + n].t === teile.zahl) { ersetzt = b.w; nimm = n + 1; }
+            if (roh === ersetzt) break;
+            zeilen.push(['t-ok', 'phonetik   "' + roh + '" ' + code + ' = ' + teile.buch + ' ' + ziel + ' · ' + Math.round(aehnl * 100) + ' % ähnlich']);
+            toks.splice(i, nimm, { t: ersetzt, fix: true }); anzahl++;
+            break;
+          }
+        }
+      });
+      zeilen.push(anzahl ? ['t-ok', 'ergebnis   ✓ ' + anzahl + (anzahl === 1 ? ' Korrektur' : ' Korrekturen')] : ['t-dim', 'ergebnis   keine Änderung nötig']);
+      return { toks: toks, zeilen: zeilen };
+    };
+
+    var render = function () {
+      var r = korrigiere(ein.value);
+      log.textContent = '';
+      r.zeilen.forEach(function (z) {
+        var d = document.createElement('div'); d.className = 'z';
+        if (z[0] === 'cmd') { var p = document.createElement('span'); p.className = 't-prompt'; p.textContent = z[1]; d.appendChild(p); d.appendChild(document.createTextNode(z[2])); }
+        else { d.className += ' ' + z[0]; d.textContent = z[1]; }
+        log.appendChild(d);
+      });
+      out.textContent = '';
+      if (!r.toks.length) { out.textContent = '…'; return; }
+      r.toks.forEach(function (o, i) {
+        if (i) out.appendChild(document.createTextNode(' '));
+        if (o.fix) { var m = document.createElement('mark'); m.textContent = o.t; out.appendChild(m); }
+        else out.appendChild(document.createTextNode(o.t));
+      });
+    };
+    var listeZeichnen = function () {
+      liste.textContent = '';
+      begriffe.forEach(function (b) {
+        var li = document.createElement('li'); li.className = 'badge';
+        li.style.setProperty('--c', b.q === 'Firma' ? 'var(--accent)' : (b.q === 'Paket' ? 'var(--idea)' : 'var(--progress)'));
+        li.textContent = b.w + ' · ' + b.q;
+        liste.appendChild(li);
+      });
+    };
+    ein.addEventListener('input', render);
+    $$('.chip-btn').forEach(function (c) { c.addEventListener('click', function () { ein.value = c.textContent; render(); ein.focus(); }); });
+    var hinzu = function () {
+      var w = neu.value.trim(); if (w.length < 3) { neu.focus(); return; }
+      begriffe.unshift({ w: w, q: 'Persönlich' }); neu.value = '';
+      listeZeichnen(); ein.value = ''; ein.placeholder = 'Jetzt eine falsch gehörte Variante von „' + w + '“ eingeben'; ein.focus(); render();
+    };
+    $('#wb-add').addEventListener('click', hinzu);
+    neu.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); hinzu(); } });
+    listeZeichnen(); render();
+  })();
+
+  // ---------- Preisrechner ----------
+  (function () {
+    var regler = $('#personen'); if (!regler) return;
+    var fmt = function (n) { return n.toLocaleString('de-DE') + ' €'; };
+    var rechne = function () {
+      var n = +regler.value;
+      $('#personen-zahl').textContent = n; $('#kicker-n').textContent = n;
+      $('#sum-team').textContent = fmt(9 * n);
+      $('#sum-team-txt').textContent = 'pro Monat für ' + n + ' Personen';
+      var business = n >= 25;
+      $('#sum-business').textContent = business ? fmt(13 * n) : 'ab 25';
+      $('#sum-business-txt').textContent = business ? 'pro Monat für ' + n + ' Personen' : 'Personen verfügbar';
+      $('#plan-team').classList.toggle('empfohlen', n < 25);
+      $('#plan-business').classList.toggle('empfohlen', business);
+      $('#plan-business').classList.toggle('aus', !business);
+      $('#plan-onprem').classList.toggle('aus', n < 50);
+      $('#sum-onprem-txt').textContent = n >= 50 ? 'Rechenzentrum oder Box' : 'ab 50 Personen';
+    };
+    regler.addEventListener('input', rechne); rechne();
+  })();
+
+  // ---------- Formular ----------
+  (function () {
+    var f = $('#anfrage'); if (!f) return;
+    var meld = $('#f-meldung');
+    var fehler = function (feld, ziel, text) { feld.setAttribute('aria-invalid', text ? 'true' : 'false'); $('#' + ziel).textContent = text || ''; };
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var el = f.elements, erstes = null;
+      var pruefe = function (feld, ziel, ok, text) { fehler(feld, ziel, ok ? '' : text); if (!ok && !erstes) erstes = feld; };
+      pruefe(el.firma, 'e-firma', el.firma.value.trim().length >= 2, 'Bitte geben Sie Ihre Firma an.');
+      pruefe(el.name, 'e-name', el.name.value.trim().length >= 2, 'Bitte geben Sie Ihren Namen an.');
+      pruefe(el.email, 'e-mail', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(el.email.value.trim()), 'Bitte geben Sie eine gültige E-Mail-Adresse an.');
+      pruefe(el.einwilligung, 'e-einw', el.einwilligung.checked, 'Bitte bestätigen Sie die Einwilligung.');
+      if (erstes) { meld.className = 'meldung'; meld.textContent = ''; erstes.focus(); return; }
+      meld.className = 'meldung ok';
+      meld.textContent = 'Entwurf: Das Formular ist noch nicht angebunden. Im fertigen Stand geht die Anfrage per POST an /api/leads.';
+    });
+  })();
+})();
+</script>
